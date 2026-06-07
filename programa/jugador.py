@@ -93,3 +93,23 @@ def login(usuario, clave):
         if jugador.usuario == usuario and jugador.clave == clave:
             return jugador
     return None
+
+def ranking_defensores():
+    """Ordena los jugadores de mayor a menor según sus victorias como defensor.
+    Devuelve una lista con los 5 jugadores con más victorias de defensor
+    (o menos, si hay menos de 5 jugadores registrados).
+    """
+    lista_jugadores = cargar_jugadores()
+    lista_ordenada = sorted(lista_jugadores, key=lambda jugador: jugador.victorias_defensor, reverse=True)
+    top5 = lista_ordenada[:5]
+    return top5
+
+def ranking_atacantes():
+    """Ordena los jugadores de mayor a menor según sus victorias como atacante.
+    Devuelve una lista con los 5 jugadores con más victorias de atacante
+    (o menos, si hay menos de 5 jugadores registrados).
+    """
+    lista_jugadores = cargar_jugadores()
+    lista_ordenada = sorted(lista_jugadores, key=lambda jugador: jugador.victorias_atacante, reverse=True)
+    top5 = lista_ordenada[:5]
+    return top5
