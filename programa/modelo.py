@@ -151,6 +151,36 @@ class UnidadRapida(Unidad):
         super().__init__("Unidad rapida",75,80,15,2,"Aumento de velocidad",2,"imagenes/unidad_rapida.png")
         
 
+class Faccion:
+    """Representa una facción del juego """
 
+    def __init__(self, nombre,imagen_base, imagen_muro, imagen_torre_basica, imagen_torre_pesada, imagen_torre_magica, imagen_soldado, imagen_tanque, imagen_unidad_rapida):
+        """Crea una facción con un nombre y las imagenes de sus estructuras y unidades
+        Recibe el nombre y las imagenes correspondientes
+        """
+         
+        self.nombre = nombre
+        self.imagen_base = imagen_base
+        self.imagen_muro = imagen_muro
+        self.imagen_torre_basica = imagen_torre_basica
+        self.imagen_torre_pesada = imagen_torre_pesada
+        self.imagen_torre_magica = imagen_torre_magica
+        self.imagen_soldado = imagen_soldado
+        self.imagen_tanque = imagen_tanque
+        self.imagen_unidad_rapida = imagen_unidad_rapida
 
+class Medieval(Faccion):
+    """Representa la faccion medieval"""
 
+    def __init__(self):
+        """Crea una facción medieval con sus imágenes correspondientes"""
+
+        super().__init__("Medieval", "imagenes/medieval/base.png", "imagenes/medieval/muro.png", "imagenes/medieval/torre_basica.png", "imagenes/medieval/torre_pesada.png", "imagenes/medieval/torre_magica.png", "imagenes/medieval/soldado.png", "imagenes/medieval/tanque.png", "imagenes/medieval/unidad_rapida.png")
+
+class Futurista(Faccion):
+    def __init__(self):
+        super().__init__("Futurista",  "imagenes/futurista/base.png", "imagenes/futurista/muro.png", "imagenes/futurista/torre_basica.png", "imagenes/futurista/torre_pesada.png", "imagenes/futurista/torre_magica.png", "imagenes/futurista/soldado.png", "imagenes/futurista/tanque.png", "imagenes/futurista/unidad_rapida.png")
+
+class Naturaleza(Faccion):
+    def __init__(self):
+        super().__init__("Naturaleza",  "imagenes/naturaleza/base.png", "imagenes/naturaleza/muro.png", "imagenes/naturaleza/torre_basica.png", "imagenes/naturaleza/torre_pesada.png", "imagenes/naturaleza/torre_magica.png", "imagenes/naturaleza/soldado.png", "imagenes/naturaleza/tanque.png", "imagenes/naturaleza/unidad_rapida.png")
