@@ -9,6 +9,8 @@ class Base:
     def __init__(self):
         """Crea una base con 1000 puntos de vida"""
         self.vida = 1000
+        self.posicion = None
+        self.imagen = "imagenes/base.png"
 
     def recibir_dano(self, dano):
         """Reduce la vida de la base según el daño recibido
@@ -32,6 +34,8 @@ class Muro:
     def __init__(self):
         self.vida = 500
         self.costo = 150
+        self.posicion = None
+        self.imagen = "imagenes/muro.png"
 
     def recibir_dano(self, dano):
         """Reduce la vida del muro según el daño recibido
@@ -53,7 +57,7 @@ class Muro:
 class Torre:
     """Representa una torre defensiva"""
 
-    def __init__(self, nombre, costo, vida, dano, alcance, habilidad, tiempo_activacion):
+    def __init__(self, nombre, costo, vida, dano, alcance, habilidad, tiempo_activacion, imagen):
         """Crea una torre con sus características
         Recibe nombre, costo, vida, daño, alcance, habilidad especial
         y el tiempo necesario para activar la habilidad
@@ -67,6 +71,8 @@ class Torre:
         self.habilidad = habilidad
         self.tiempo_activacion = tiempo_activacion
         self.turnos_transcurridos = 0
+        self.posicion = None
+        self.imagen = imagen
 
     def recibir_dano(self, dano):
         self.vida -= dano
@@ -81,25 +87,25 @@ class TorreBasica(Torre):
 
     def __init__(self):
         """Crea una torre básica con estadísticas predeterminadas"""
-        super().__init__("Basica",100,150,20,2,"Disparo doble",3)
+        super().__init__("Basica",100,150,20,2,"Disparo doble",3,"imagenes/torre_basica.png")
 
 class TorrePesada(Torre):
     """Representa una torre pesada"""
 
     def __init__(self):
-        super().__init__("Pesada",200,250,40,2,"Danio aumentado",4)
+        super().__init__("Pesada",200,250,40,2,"Danio aumentado",4,"imagenes/torre_pesada.png")
 
 class TorreMagica(Torre):
     """Representa una torre mágica"""
 
     def __init__(self):
-        super().__init__("Magica",150,100,15,3,"Congelar",2)
+        super().__init__("Magica",150,100,15,3,"Congelar",2,"imagenes/torre_magica.png")
 
 
 class Unidad:
     """Representa una unidad atacante"""
 
-    def __init__(self, nombre, costo, vida, dano, velocidad, habilidad, tiempo_activacion):
+    def __init__(self, nombre, costo, vida, dano, velocidad, habilidad, tiempo_activacion, imagen):
         """Crea una unidad con sus características
         Recibe nombre, costo, vida, daño, velocidad,
         habilidad especial y tiempo de activación
@@ -113,6 +119,8 @@ class Unidad:
         self.habilidad = habilidad
         self.tiempo_activacion = tiempo_activacion
         self.turnos_transcurridos = 0
+        self.posicion = None
+        self.imagen = imagen
 
     def recibir_dano(self, dano):
         self.vida -= dano
@@ -128,17 +136,21 @@ class Soldado(Unidad):
 
     def __init__(self):
         """Crea un soldado con estadísticas predeterminadas"""
-        super().__init__("Soldado",50,100,20,1,"Ataque doble",3)
+        super().__init__("Soldado",50,100,20,1,"Ataque doble",3, "imagenes/soldado.png")
 
 class Tanque(Unidad):
     """Representa una unidad tipo tanque"""
 
     def __init__(self):
-        super().__init__("Tanque",150,300,40,1,"Escudo temporal",4)
+        super().__init__("Tanque",150,300,40,1,"Escudo temporal",4, "imagenes/tanque.png")
 
 class UnidadRapida(Unidad):
     """Representa una unidad rápida"""
 
     def __init__(self):
-        super().__init__("Unidad rápida",75,80,15,2,"Aumento de velocidad",2)
+        super().__init__("Unidad rapida",75,80,15,2,"Aumento de velocidad",2,"imagenes/unidad_rapida.png")
         
+
+
+
+
