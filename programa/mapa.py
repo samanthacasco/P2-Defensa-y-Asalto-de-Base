@@ -34,6 +34,7 @@ class Mapa:
             i += 1
         return matriz
     
+
     def colocar_base(self):
         """Coloca la base en la posición central del mapa 
         No recibe parámetros 
@@ -43,6 +44,7 @@ class Mapa:
         columna_central = self.columnas // 2
         self.base.posicion = (fila_central, columna_central)
         self.matriz[fila_central][columna_central] = self.base
+
 
     def colocar_objeto(self, objeto, fila, columna):
         """Coloca un objeto en una posición del mapa si la casilla está libre 
@@ -74,7 +76,7 @@ class Mapa:
         Recibe el objeto que se desea eliminar
         Devuelve True si el objeto fue eliminado o False en caso contrario
         """
-        
+
         if objeto.posicion is None:
             return False
 
@@ -93,6 +95,98 @@ class Mapa:
             self.unidades.remove(objeto)
 
         return True
+
+# -------------------------------------
+
+    def mover_objeto(self, objeto, nueva_fila, nueva_columna):
+        """Mueve una unidad a una nueva posición del mapa
+        Recibe la unidad y las coordenadas de destino
+        Devuelve True si el movimiento se realizó o False en caso contrario 
+        """
+
+        if not isinstance(objeto, Unidad):
+            return False
+
+        # Verifica que la unidad se encuentre colocada en el mapa
+        if objeto.posicion is None:
+            return False
+
+        if not (0 <= nueva_fila < self.filas and 0 <= nueva_columna < self.columnas):
+            return False
+
+        # verifica que la casilla de destino esté vacía
+        if self.matriz[nueva_fila][nueva_columna] is not None:
+            return False
+
+        # obtiene la posición actual de la unidad
+        fila_actual, columna_actual = objeto.posicion
+
+        # libera la casilla donde se encontraba la unidad
+        self.matriz[fila_actual][columna_actual] = None
+
+        # coloca la unidad en la nueva posición
+        self.matriz[nueva_fila][nueva_columna] = objeto
+        
+        # actualiza la posición almacenada en la unidad
+        objeto.posicion = (nueva_fila, nueva_columna)
+
+        return True # el movimiento se realizó correctamente
+
+
+    def mover_arriba(self, objeto):
+        """Mueve una unidad una casilla hacia arriba
+        Recibe la unidad a mover
+        Devuelve True si el movimiento se realizó o False en caso contrario
+        """
+
+        if objeto.posicion is None:
+            return False
+
+        fila, columna = objeto.posicion
+
+        return self.mover_objeto(objeto, fila - 1, columna)
+
+
+    def mover_abajo(self, objeto):
+        """Mueve una unidad una casilla hacia abajo
+        Recibe la unidad a mover
+        Devuelve True si el movimiento se realizó o False en caso contrario
+        """
+
+        if objeto.posicion is None:
+            return False
+
+        fila, columna = objeto.posicion
+
+        return self.mover_objeto(objeto, fila + 1, columna)
+
+
+    def mover_izquierda(self, objeto):
+        """Mueve una unidad una casilla hacia la izquierda
+        Recibe la unidad a mover
+        Devuelve True si el movimiento se realizó o False en caso contrario
+        """
+
+        if objeto.posicion is None:
+            return False
+
+        fila, columna = objeto.posicion
+
+        return self.mover_objeto(objeto, fila, columna - 1)
+
+
+    def mover_derecha(self, objeto):
+        """Mueve una unidad una casilla hacia la derecha
+        Recibe la unidad a mover
+        Devuelve True si el movimiento se realizó o False en caso contrario
+        """
+
+        if objeto.posicion is None:
+            return False
+
+        fila, columna = objeto.posicion
+
+        return self.mover_objeto(objeto, fila, columna + 1)
 
 
 
