@@ -12,6 +12,8 @@ class Mapa:
         self.muros = [ ]
         self.torres = [ ]
         self.unidades = [ ]
+ 
+        self.colocar_base()
 
     def crear_matriz(self):
         """Crea una matriz de 21x21 inicializada con valores None
@@ -66,6 +68,32 @@ class Mapa:
             return True
         
         return False
+    
+    def eliminar_objeto(self, objeto):
+        """Elimina un objeto del mapa
+        Recibe el objeto que se desea eliminar
+        Devuelve True si el objeto fue eliminado o False en caso contrario
+        """
+        
+        if objeto.posicion is None:
+            return False
+
+        fila, columna = objeto.posicion
+
+        self.matriz[fila][columna] = None
+        objeto.posicion = None
+
+        if isinstance(objeto, Muro):
+            self.muros.remove(objeto)
+
+        elif isinstance(objeto, Torre):
+            self.torres.remove(objeto)
+
+        elif isinstance(objeto, Unidad):
+            self.unidades.remove(objeto)
+
+        return True
+
 
 
 
