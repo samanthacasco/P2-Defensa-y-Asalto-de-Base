@@ -105,7 +105,7 @@ class TorreMagica(Torre):
 class Unidad:
     """Representa una unidad atacante"""
 
-    def __init__(self, nombre, costo, vida, dano, velocidad, habilidad, tiempo_activacion, imagen):
+    def __init__(self, nombre, costo, vida, dano, velocidad, alcance, habilidad, tiempo_activacion, imagen):
         """Crea una unidad con sus características
         Recibe nombre, costo, vida, daño, velocidad,
         habilidad especial y tiempo de activación
@@ -116,6 +116,7 @@ class Unidad:
         self.vida = vida
         self.dano = dano
         self.velocidad = velocidad
+        self.alcance = alcance 
         self.habilidad = habilidad
         self.tiempo_activacion = tiempo_activacion
         self.turnos_transcurridos = 0
@@ -136,19 +137,19 @@ class Soldado(Unidad):
 
     def __init__(self):
         """Crea un soldado con estadísticas predeterminadas"""
-        super().__init__("Soldado",50,100,20,1,"Ataque doble",3, "imagenes/soldado.png")
+        super().__init__("Soldado",50,100,20,1,1,"Ataque doble",3, "imagenes/soldado.png")
 
 class Tanque(Unidad):
     """Representa una unidad tipo tanque"""
 
     def __init__(self):
-        super().__init__("Tanque",150,300,40,1,"Escudo temporal",4, "imagenes/tanque.png")
+        super().__init__("Tanque",150,300,40,1,2,"Escudo temporal",4, "imagenes/tanque.png")
 
 class UnidadRapida(Unidad):
     """Representa una unidad rápida"""
 
     def __init__(self):
-        super().__init__("Unidad rapida",75,80,15,2,"Aumento de velocidad",2,"imagenes/unidad_rapida.png")
+        super().__init__("Unidad rapida",75,80,15,2,1,"Aumento de velocidad",2,"imagenes/unidad_rapida.png")
         
 
 class Faccion:
@@ -184,3 +185,4 @@ class Futurista(Faccion):
 class Naturaleza(Faccion):
     def __init__(self):
         super().__init__("Naturaleza",  "imagenes/naturaleza/base.png", "imagenes/naturaleza/muro.png", "imagenes/naturaleza/torre_basica.png", "imagenes/naturaleza/torre_pesada.png", "imagenes/naturaleza/torre_magica.png", "imagenes/naturaleza/soldado.png", "imagenes/naturaleza/tanque.png", "imagenes/naturaleza/unidad_rapida.png")
+
