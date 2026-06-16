@@ -45,7 +45,7 @@ class Muro:
 
         self.vida -= dano
 
-    def esta_destruido(self):
+    def esta_destruida(self):
         """Indica si el muro ha sido destruido
         Devuelve True si la vida es menor o igual a 0
         """
