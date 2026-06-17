@@ -99,17 +99,18 @@ class Mapa:
 # -------------------------------------
 
     def mover_objeto(self, objeto, nueva_fila, nueva_columna):
-        """Mueve una unidad a una nueva posición del mapa
-        Recibe la unidad y las coordenadas de destino
+        """Mueve un objeto a una nueva posición del mapa
+        Recibe el objeto y las coordenadas de destino
         Devuelve True si el movimiento se realizó o False en caso contrario 
         """
-
-        if not isinstance(objeto, Unidad):
-            return False
-
         # Verifica que la unidad se encuentre colocada en el mapa
         if objeto.posicion is None:
             return False
+
+        if isinstance(objeto, Unidad):
+            if objeto.congelada:
+                objeto.congelada = False
+                return False
 
         if not (0 <= nueva_fila < self.filas and 0 <= nueva_columna < self.columnas):
             return False
