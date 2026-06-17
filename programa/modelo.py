@@ -122,12 +122,11 @@ class Unidad:
         self.turnos_transcurridos = 0
         self.posicion = None
         self.imagen = imagen
-
         # indica si la unidad está congelada y no puede moverse
         self.congelada = False
-
         # Indica si la unidad tiene un escudo temporal activo
         self.escudo_activo = False
+        self.velocidad_aumentada = False
 
     def recibir_dano(self, dano):
         self.vida -= dano
@@ -147,6 +146,16 @@ class Soldado(Unidad):
 
 class Tanque(Unidad):
     """Representa una unidad tipo tanque"""
+
+    def recibir_dano(self, dano):
+        """Reduce la vida del tanque según el daño recibido.
+        Si el escudo temporal está activo, recibe la mitad del daño.
+        """
+        if self.escudo_activo:
+            dano = dano // 2
+            self.escudo_activo = False
+
+        self.vida -= dano 
 
     def __init__(self):
         super().__init__("Tanque",150,300,40,1,2,"Escudo temporal",4, "imagenes/tanque.png")
@@ -191,3 +200,4 @@ class Futurista(Faccion):
 class Naturaleza(Faccion):
     def __init__(self):
         super().__init__("Naturaleza",  "imagenes/naturaleza/base.png", "imagenes/naturaleza/muro.png", "imagenes/naturaleza/torre_basica.png", "imagenes/naturaleza/torre_pesada.png", "imagenes/naturaleza/torre_magica.png", "imagenes/naturaleza/soldado.png", "imagenes/naturaleza/tanque.png", "imagenes/naturaleza/unidad_rapida.png")
+
