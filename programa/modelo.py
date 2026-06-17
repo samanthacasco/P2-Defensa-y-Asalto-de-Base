@@ -123,6 +123,12 @@ class Unidad:
         self.posicion = None
         self.imagen = imagen
 
+        # indica si la unidad está congelada y no puede moverse
+        self.congelada = False
+
+        # Indica si la unidad tiene un escudo temporal activo
+        self.escudo_activo = False
+
     def recibir_dano(self, dano):
         self.vida -= dano
 
@@ -185,4 +191,3 @@ class Futurista(Faccion):
 class Naturaleza(Faccion):
     def __init__(self):
         super().__init__("Naturaleza",  "imagenes/naturaleza/base.png", "imagenes/naturaleza/muro.png", "imagenes/naturaleza/torre_basica.png", "imagenes/naturaleza/torre_pesada.png", "imagenes/naturaleza/torre_magica.png", "imagenes/naturaleza/soldado.png", "imagenes/naturaleza/tanque.png", "imagenes/naturaleza/unidad_rapida.png")
-
