@@ -1,4 +1,5 @@
 from combate import atacar 
+from modelo import Unidad
 
 def habilidad_lista(objeto):
     """Verifica si la habilidad especial del objeto está lista para activarse
@@ -90,4 +91,48 @@ def danio_aumentado(torre, objetivo, mapa):
 
     # si la habilidad no está lista, realiza un ataque normal
     return atacar(torre, objetivo, mapa)
+
+def escudo_temporal(tanque):
+    """Activa el escudo temporal del tanque cuando la habilidad está lista
+    Recibe el tanque
+    Devuelve True si el escudo fue activado o False en caso contrario
+    """
+
+    # Verifica si la habilidad especial está lista
+    if habilidad_lista(tanque):
+        tanque.escudo_activo = True
+        return True
+    
+    return False
+
+def aumento_velocidad(unidad):
+    """Activa el aumento de velocidad de la unidad rápida cuando la habilidad está lista
+    Recibe la unidad rápida
+    Devuelve True si la habilidad fue activada o False en caso contrario
+    """
+
+    # Verifica si la habilidad especial está lista
+    if habilidad_lista(unidad):
+
+        # Activa el aumento de velocidad
+        unidad.velocidad_aumentada = True
+        return True
+    return False
+
+def congelar(torre, objetivo, mapa):
+    """Permite a la torre mágica congelar una unidad enemiga
+    Recibe la torre, el objetivo y el mapa
+    Devuelve True si se realizó el ataque o False en caso contrario
+    """
+
+    # Realiza el ataque
+    resultado = atacar(torre, objetivo, mapa)
+
+    # si la habilidad está lista y el objetivo sigue vivo
+    if habilidad_lista(torre) and not objetivo.esta_destruida():
+
+        # Congela al objetivo
+        objetivo.congelada = True
+
+    return resultado
 
