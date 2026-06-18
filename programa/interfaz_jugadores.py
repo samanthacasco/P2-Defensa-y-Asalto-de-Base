@@ -18,6 +18,9 @@ def mostrar_menu():
     boton_ranking = tk.Button(ventana, text="Ver Ranking", command=mostrar_ranking)
     boton_ranking.pack() 
     
+    boton_salir= tk.Button(ventana, text="Salir", command= ventana.destroy)
+    boton_salir.pack() 
+    
 def mostrar_login():
     """
     Limpia la ventana y dibuja la ventana donde muestran los campos para agregar
@@ -85,11 +88,14 @@ def mostrar_ranking():
     boton_regresar = tk.Button(ventana, text="Regresar", command=mostrar_menu)
     boton_regresar.pack()
 
+def iniciar():
+    """Crea y configura la ventana principal y arranca la aplicación en el menú."""
 
-ventana = tk.Tk()
-ventana.title("Defensa y Asalto de Base")
-centrar_ventana(ventana, 400, 300)
-ventana.resizable(False, False)
+    global ventana
+    ventana = tk.Tk()
+    ventana.title("Defensa y Asalto de Base")
+    centrar_ventana(ventana, 400, 300)
+    ventana.resizable(False, False)
 
-mostrar_menu()          
-ventana.mainloop()      
+    mostrar_menu()          
+    ventana.mainloop()     
