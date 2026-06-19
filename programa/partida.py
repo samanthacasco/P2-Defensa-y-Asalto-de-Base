@@ -1,4 +1,5 @@
 from mapa import Mapa
+from economia import agregar_recursos
 
 class Partida:
     def __init__(self, jugador_defensor, jugador_atacante):
@@ -29,12 +30,62 @@ class Partida:
             self.jugador_actual = "atacante"
         else:
             self.jugador_actual = "defensor"
+
+        # agrega recursos a ambos jugadores
+        agregar_recursos(self)
     
+    def obtener_jugador_actual(self):
+        """Devuelve el jugador al que le corresponde jugar"""
+
+        if self.jugador_actual == "defensor":
+            return self.jugador_defensor
+
+        return self.jugador_atacante
+    
+
     def gano_defensor(self):
         """Indica si el defensor ganó la ronda.
-        El defensor gana si el atacante se quedó sin dinero y sin unidades en el mapa.
+        El defensor gana si el atacante se quedó sin dinero, sin unidades en el mapa
+        y la base central sigue en pie.
         Devuelve True si el defensor ganó, False en caso contrario.
         """
-        if self.dinero_atacante <= 0 and len(self.mapa.unidades) == 0:
+        if (self.dinero_atacante <= 0 and len(self.mapa.unidades) == 0 and not self.mapa.base.esta_destruida()):
             return True
         return False
+    
+    def gano_atacante(self):
+        """Indica si el atacante ganó la ronda.
+        El atacante gana cuando destruye la base central.
+        Devuelve True si ganó la ronda o False en caso contrario.
+        """
+
+        if self.mapa.base.esta_destruida():
+            return True
+
+        return False
+    
+    def registrar_ronda(self):
+        """Actualiza el marcador de rondas ganadas.
+        No recibe parámetros ni devuelve nada.
+        """
+
+        if self.gano_defensor():
+            self.rondas_defensor += 1
+
+        elif self.gano_atacante():
+            self.rondas_atacante += 1
+
+    def obtener_ganador(self):
+        """Devuelve el ganador de la partida.
+        El primer jugador en ganar 3 rondas gana la partida.
+        Devuelve 'defensor', 'atacante' o None.
+        """
+
+        if self.rondas_defensor >= 3:
+            return "defensor"
+
+        if self.rondas_atacante >= 3:
+            return "atacante"
+
+        return None
+
