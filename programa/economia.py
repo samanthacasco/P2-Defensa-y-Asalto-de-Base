@@ -69,3 +69,35 @@ def comprar_unidad(partida, unidad, fila, columna, rol):
     else:
         partida.dinero_atacante -= unidad.costo
     return True
+
+def agregar_recursos(partida):
+    """Agrega recursos al inicio de una ronda.
+    Recibe la partida.
+    No devuelve nada.
+    """
+
+    recursos_por_ronda = 50
+
+    # aumenta el dinero del defensor
+    partida.dinero_defensor += recursos_por_ronda
+
+    # aumenta el dinero del atacante
+    partida.dinero_atacante += recursos_por_ronda
+
+def recompensa_atacante(partida, dano_realizado):
+    """Otorga dinero al atacante según el daño realizado.
+    Recibe la partida y el daño realizado.
+    No devuelve nada.
+    """
+
+    partida.dinero_atacante += dano_realizado // 10
+
+def recompensa_defensor(partida, unidades_eliminadas):
+    """Otorga dinero al defensor por cada unidad eliminada.
+    Recibe la partida y la cantidad de unidades eliminadas.
+    No devuelve nada.
+    """
+
+    recompensa_por_unidad = 20
+
+    partida.dinero_defensor += unidades_eliminadas * recompensa_por_unidad
