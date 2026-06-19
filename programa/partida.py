@@ -36,9 +36,6 @@ class Partida:
         if self.dinero_atacante <= 0 and len(self.mapa.unidades) == 0:
             return True
         return False
-    
-        if not partida.mapa.base.esta_destruida():
-            return True
         
         
 
