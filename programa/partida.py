@@ -17,6 +17,8 @@ class Partida:
         self.mapa = Mapa()
         self.turno = 1
         self.jugador_actual = "defensor"
+        self.faccion_defensor = None
+        self.faccion_atacante = None
     
     def cambiar_turno(self):
         """Avanza al siguiente turno y alterna el jugador actual.
@@ -36,7 +38,3 @@ class Partida:
         if self.dinero_atacante <= 0 and len(self.mapa.unidades) == 0:
             return True
         return False
-        
-        
-
-        
