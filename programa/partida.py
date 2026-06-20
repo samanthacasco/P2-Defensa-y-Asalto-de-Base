@@ -1,5 +1,6 @@
 from mapa import Mapa
 from economia import agregar_recursos
+from jugador import cargar_jugadores, guardar_jugadores
 
 class Partida:
     def __init__(self, jugador_defensor, jugador_atacante):
@@ -86,6 +87,26 @@ class Partida:
 
         if self.rondas_atacante >= 3:
             return "atacante"
-
         return None
-
+    
+    def actualizar_victorias(self):
+        """Suma una victoria al jugador ganador de la partida y la guarda en el archivo.
+        Determina el ganador, lo busca en la lista de jugadores guardados,
+        le suma la victoria según su rol y guarda la lista actualizada.
+        """
+        ganador = self.obtener_ganador()
+        if ganador is None:
+            return
+         
+        if ganador == "defensor":
+            usuario_ganador = self.jugador_defensor.usuario
+        else:
+            usuario_ganador = self.jugador_atacante.usuario
+        
+        lista_jugadores = cargar_jugadores()
+        for jugador in lista_jugadores:
+            if jugador.usuario == usuario_ganador:
+                jugador.agregar_victoria(ganador)
+        
+        guardar_jugadores(lista_jugadores)  
+        
