@@ -27,6 +27,54 @@ def obtener_imagen(contenido, partida):
     elif isinstance(contenido, UnidadRapida):
         return partida.faccion_atacante.imagen_unidad_rapida
 
+def seleccionar_objeto(ventana, objeto):
+    """Guarda el objeto seleccionado del tablero
+    Recibe la ventana y el objeto seleccionado
+    No devuelve nada
+    """
+
+    # Guarda el objeto seleccionado dentro de la ventana
+    ventana.objeto_seleccionado = objeto
+
+
+def mover_arriba_interfaz(ventana, partida):
+    """Mueve hacia arriba la unidad seleccionada
+    Recibe la ventana y la partida
+    No devuelve nada
+    """
+
+    # Verifica que haya un objeto seleccionado
+    if ventana.objeto_seleccionado is not None:
+
+        # Mueve la unidad usando la lógica del mapa
+        partida.mapa.mover_arriba(ventana.objeto_seleccionado)
+        # Vuelve a dibujar el tablero actualizado
+        mostrar_tablero(ventana, partida)
+
+
+def mover_abajo_interfaz(ventana, partida):
+    """Mueve hacia abajo la unidad seleccionada"""
+
+    if ventana.objeto_seleccionado is not None:
+        partida.mapa.mover_abajo(ventana.objeto_seleccionado)
+        mostrar_tablero(ventana, partida)
+
+
+def mover_izquierda_interfaz(ventana, partida):
+    """Mueve hacia la izquierda la unidad seleccionada"""
+
+    if ventana.objeto_seleccionado is not None:
+        partida.mapa.mover_izquierda(ventana.objeto_seleccionado)
+        mostrar_tablero(ventana, partida)
+
+
+def mover_derecha_interfaz(ventana, partida):
+    """Mueve hacia la derecha la unidad seleccionada"""
+
+    if ventana.objeto_seleccionado is not None:
+        partida.mapa.mover_derecha(ventana.objeto_seleccionado)
+        mostrar_tablero(ventana, partida)
+
 def mostrar_tablero(ventana, partida):
     limpiar_ventana(ventana)
     
@@ -36,6 +84,7 @@ def mostrar_tablero(ventana, partida):
     centrar_ventana(ventana, ancho, alto)
     
     ventana.imagenes = []
+
     ventana.imagen_vacia = crear_imagen_vacia(tamano) 
     
     # mostrar dinero del defensor
@@ -62,6 +111,22 @@ def mostrar_tablero(ventana, partida):
     label_rondas_atacante = tk.Label(ventana, text=f"Rondas atacante: {partida.rondas_atacante}")
     label_rondas_atacante.grid(row=5, column=22, padx=15)
 
+    # botón para mover hacia arriba
+    boton_arriba = tk.Button(ventana, text="↑", command=lambda: mover_arriba_interfaz(ventana, partida))
+    boton_arriba.grid(row=7, column=22)
+
+    # botón para mover hacia la izquierda
+    boton_izquierda = tk.Button(ventana,text="←",command=lambda: mover_izquierda_interfaz(ventana, partida))
+    boton_izquierda.grid(row=8, column=21)
+
+    # botón para mover hacia la derecha
+    boton_derecha = tk.Button(ventana, text="→", command=lambda: mover_derecha_interfaz(ventana, partida))
+    boton_derecha.grid(row=8, column=23)
+
+    # btón para mover hacia abajo
+    boton_abajo = tk.Button(ventana, text="↓", command=lambda: mover_abajo_interfaz(ventana, partida))
+    boton_abajo.grid(row=9, column=22)
+
     for fila in range(partida.mapa.filas):
         for columna in range(partida.mapa.columnas):
             contenido = partida.mapa.matriz[fila][columna]
@@ -73,5 +138,5 @@ def mostrar_tablero(ventana, partida):
                 imagen = cargar_imagen(ruta, tamano)        
                 ventana.imagenes.append(imagen)
 
-            boton = tk.Button(ventana, image=imagen, width=tamano, height=tamano)  
+            boton = tk.Button(ventana, image=imagen, width=tamano, height=tamano, command=lambda o=contenido: seleccionar_objeto(ventana, o)) 
             boton.grid(row=fila, column=columna)
