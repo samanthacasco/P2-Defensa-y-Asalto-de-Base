@@ -1,4 +1,5 @@
 import tkinter as tk
+from PIL import Image, ImageTk
 
 def centrar_ventana(ventana, ancho, alto):
     """
@@ -21,3 +22,20 @@ def limpiar_ventana(ventana):
     """
     for widget in ventana.winfo_children():
         widget.destroy()  
+    
+def cargar_imagen(ruta, tamano):
+    """Carga una imagen, la redimensiona y la prepara para usar en Tkinter.
+    Recibe la ruta de la imagen y el tamaño (un número de píxeles para ancho y alto).
+    Devuelve la imagen lista para mostrar en un widget.
+    """
+    imagen_original = Image.open(ruta)
+    imagen_chica = imagen_original.resize((tamano, tamano))
+    imagen = ImageTk.PhotoImage(imagen_chica)
+    return imagen
+
+def crear_imagen_vacia(tamano):
+    """Crea una imagen transparente del tamaño dado, para casillas vacías.
+    Devuelve la imagen lista para Tkinter.
+    """
+    imagen = Image.new("RGBA", (tamano, tamano), (0, 0, 0, 0))
+    return ImageTk.PhotoImage(imagen)
