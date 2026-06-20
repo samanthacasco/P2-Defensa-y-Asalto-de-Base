@@ -103,15 +103,21 @@ class Mapa:
         Recibe el objeto y las coordenadas de destino
         Devuelve True si el movimiento se realizó o False en caso contrario 
         """
+
+        # Solo las unidades pueden moverse
+        if not isinstance(objeto, Unidad):
+            return False
+        
         # Verifica que la unidad se encuentre colocada en el mapa
         if objeto.posicion is None:
             return False
-
-        if isinstance(objeto, Unidad):
-            if objeto.congelada:
-                objeto.congelada = False
-                return False
-
+        
+         # Si la unidad está congelada, pierde el turno y se descongela
+        if objeto.congelada:
+            objeto.congelada = False
+            return False
+        
+        # Verifica que la nueva posición esté dentro del mapa
         if not (0 <= nueva_fila < self.filas and 0 <= nueva_columna < self.columnas):
             return False
 
@@ -188,10 +194,3 @@ class Mapa:
         fila, columna = objeto.posicion
 
         return self.mover_objeto(objeto, fila, columna + 1)
-
-
-
-
-"""
-corregi tamaño de matriz"""
-
