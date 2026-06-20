@@ -1,6 +1,6 @@
 import tkinter as tk
-from utilidades import limpiar_ventana
-from modelo import (Base, Muro, Torre, Unidad,TorreBasica, TorrePesada, TorreMagica,
+from utilidades import centrar_ventana, limpiar_ventana, cargar_imagen, crear_imagen_vacia
+from modelo import (Base, Muro, Torre, Unidad, TorreBasica, TorrePesada, TorreMagica,
                     Soldado, Tanque, UnidadRapida)
 
 def obtener_imagen(contenido, partida):
@@ -26,34 +26,36 @@ def obtener_imagen(contenido, partida):
         return partida.faccion_atacante.imagen_tanque
     elif isinstance(contenido, UnidadRapida):
         return partida.faccion_atacante.imagen_unidad_rapida
-    
+
 def mostrar_tablero(ventana, partida):
     limpiar_ventana(ventana)
     
+    tamano = 50
     ventana.imagenes = []
-
+    ventana.imagen_vacia = crear_imagen_vacia(tamano) 
+    
     # mostrar dinero del defensor
-    label_defensor = tk.Label(ventana,text=f"Dinero defensor: {partida.dinero_defensor}")
+    label_defensor = tk.Label(ventana, text=f"Dinero defensor: {partida.dinero_defensor}")
     label_defensor.grid(row=0, column=22, padx=15)
 
     # mostrar dinero del atacante
-    label_atacante = tk.Label(ventana,text=f"Dinero atacante: {partida.dinero_atacante}")
+    label_atacante = tk.Label(ventana, text=f"Dinero atacante: {partida.dinero_atacante}")
     label_atacante.grid(row=1, column=22, padx=15)
 
     # mostrar turno actual
-    label_turno = tk.Label(ventana,text=f"Turno: {partida.turno}")
+    label_turno = tk.Label(ventana, text=f"Turno: {partida.turno}")
     label_turno.grid(row=2, column=22, padx=15)
 
     # mostrar jugador actual
-    label_jugador = tk.Label(ventana,text=f"Jugador actual: {partida.jugador_actual}")
+    label_jugador = tk.Label(ventana, text=f"Jugador actual: {partida.jugador_actual}")
     label_jugador.grid(row=3, column=22, padx=15)
 
     # mostrar marcador de rondas, defensor
-    label_rondas_defensor = tk.Label(ventana,text=f"Rondas defensor: {partida.rondas_defensor}")
+    label_rondas_defensor = tk.Label(ventana, text=f"Rondas defensor: {partida.rondas_defensor}")
     label_rondas_defensor.grid(row=4, column=22, padx=15)
 
     # mostrar marcador de rondas, atacante
-    label_rondas_atacante = tk.Label(ventana,text=f"Rondas atacante: {partida.rondas_atacante}")
+    label_rondas_atacante = tk.Label(ventana, text=f"Rondas atacante: {partida.rondas_atacante}")
     label_rondas_atacante.grid(row=5, column=22, padx=15)
 
     for fila in range(partida.mapa.filas):
@@ -61,12 +63,11 @@ def mostrar_tablero(ventana, partida):
             contenido = partida.mapa.matriz[fila][columna]
 
             if contenido is None:
-                boton = tk.Button(ventana, width=2, height=1)
-                
+                imagen = ventana.imagen_vacia
             else:
                 ruta = obtener_imagen(contenido, partida)
-                imagen = tk.PhotoImage(file=ruta)
+                imagen = cargar_imagen(ruta, tamano)        
                 ventana.imagenes.append(imagen)
-                boton = tk.Button(ventana, image=imagen, width=40, height=40)
 
+            boton = tk.Button(ventana, image=imagen, width=tamano, height=tamano)  
             boton.grid(row=fila, column=columna)
