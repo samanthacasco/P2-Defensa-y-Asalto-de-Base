@@ -41,7 +41,7 @@ def atacar(atacante, objetivo, mapa):
 
         # Elimina el objetivo del mapa si no es la base
         if not isinstance(objetivo, Base):
-            mapa.eliminar_objetivo(objetivo)
+            mapa.eliminar_objeto(objetivo)
 
     # Indica que el ataque se realizó correctamente
     return True
