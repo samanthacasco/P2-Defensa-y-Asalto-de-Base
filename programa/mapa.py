@@ -4,9 +4,9 @@ class Mapa:
     """Representa el tablero del juego"""
 
     def __init__(self):
-        """Crea un mapa de 21x21 casillas y coloca la base central"""
-        self.filas = 21
-        self.columnas = 21
+        """Crea un mapa de 13x13 casillas y coloca la base central"""
+        self.filas = 13
+        self.columnas = 13
         self.matriz = self.crear_matriz()
         self.base = Base()
         self.muros = [ ]
@@ -16,7 +16,7 @@ class Mapa:
         self.colocar_base()
 
     def crear_matriz(self):
-        """Crea una matriz de 21x21 inicializada con valores None
+        """Crea una matriz de 13x13 inicializada con valores None
         No recibe parámetros 
         Devuelve la matriz creada """
         
@@ -192,5 +192,6 @@ class Mapa:
 
 
 
-
+"""
+corregi tamaño de matriz"""
 
