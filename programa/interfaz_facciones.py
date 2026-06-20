@@ -1,6 +1,7 @@
 from modelo import Medieval, Futurista, Naturaleza
 from utilidades import limpiar_ventana
 import tkinter as tk
+from interfaz_tablero import mostrar_tablero 
 
 def elegir_faccion_defensor(ventana, partida):
     """Muestra la pantalla para que el defensor elija su facción.
@@ -34,6 +35,7 @@ def elegir_faccion_atacante(ventana, partida):
     """
     def elegir_atacante(faccion):
         partida.faccion_atacante = faccion
+        mostrar_tablero(ventana, partida)
     
     limpiar_ventana(ventana)
 
