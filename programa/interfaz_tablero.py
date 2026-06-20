@@ -30,7 +30,7 @@ def obtener_imagen(contenido, partida):
 def mostrar_tablero(ventana, partida):
     limpiar_ventana(ventana)
     
-    tamano = 50
+    tamano = 40
     ancho = partida.mapa.columnas * tamano + 250
     alto = partida.mapa.filas * tamano + 120
     centrar_ventana(ventana, ancho, alto)
