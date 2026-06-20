@@ -31,6 +31,10 @@ def mostrar_tablero(ventana, partida):
     limpiar_ventana(ventana)
     
     tamano = 50
+    ancho = partida.mapa.columnas * tamano + 250
+    alto = partida.mapa.filas * tamano + 120
+    centrar_ventana(ventana, ancho, alto)
+    
     ventana.imagenes = []
     ventana.imagen_vacia = crear_imagen_vacia(tamano) 
     
