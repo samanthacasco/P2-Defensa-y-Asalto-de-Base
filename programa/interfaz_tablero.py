@@ -1,11 +1,10 @@
-from combate import atacar
-
 import tkinter as tk
 from tkinter import messagebox
 from utilidades import centrar_ventana, limpiar_ventana, cargar_imagen, crear_imagen_vacia
 from modelo import (Base, Muro, Torre, Unidad, TorreBasica, TorrePesada, TorreMagica,
                     Soldado, Tanque, UnidadRapida)
 from economia import comprar_unidad, comprar_torre, comprar_muro
+from combate import atacar, esta_al_alcance
 
 tablero_iniciado = False
 
@@ -75,10 +74,12 @@ def mover_derecha_interfaz(ventana, partida):
 
 # ---- compras del atacante ----
 def comprar_soldado_interfaz(ventana, partida):
-    """Compra un soldado y lo coloca en la casilla seleccionada
-    Recibe la ventana y la partida
-    No devuelve nada
-    """
+    """Compra un soldado y lo coloca en la casilla seleccionada"""
+
+    if partida.jugador_actual != "atacante":
+        messagebox.showwarning("No es tu turno", "Solo puedes comprar unidades en el turno del atacante.")
+        return
+
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
         messagebox.showwarning("Casilla no seleccionada", "Primero selecciona una casilla del tablero.")
         return
@@ -97,6 +98,10 @@ def comprar_tanque_interfaz(ventana, partida):
     Recibe la ventana y la partida.
     No devuelve nada.
     """
+    if partida.jugador_actual != "atacante":
+        messagebox.showwarning("No es tu turno", "Solo puedes comprar unidades en el turno del atacante.")
+        return
+    
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
         messagebox.showwarning("Casilla no seleccionada", "Primero selecciona una casilla del tablero.")
         return
@@ -115,6 +120,10 @@ def comprar_unidad_rapida_interfaz(ventana, partida):
     Recibe la ventana y la partida.
     No devuelve nada.
     """
+    if partida.jugador_actual != "atacante":
+        messagebox.showwarning("No es tu turno", "Solo puedes comprar unidades en el turno del atacante.")
+        return
+    
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
         messagebox.showwarning("Casilla no seleccionada", "Primero selecciona una casilla del tablero.")
         return
@@ -134,6 +143,10 @@ def comprar_muro_interfaz(ventana, partida):
     Recibe la ventana y la partida.
     No devuelve nada.
     """
+    if partida.jugador_actual != "defensor":
+        messagebox.showwarning("No es tu turno", "Solo puedes comprar torres y muros en el turno del defensor.")
+        return
+    
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
         messagebox.showwarning("Casilla no seleccionada", "Primero selecciona una casilla del tablero.")
         return
@@ -148,14 +161,16 @@ def comprar_muro_interfaz(ventana, partida):
 
 
 def comprar_torre_basica_interfaz(ventana, partida):
-    """Compra una torre básica y la coloca en la casilla seleccionada.
-    Recibe la ventana y la partida.
-    No devuelve nada.
-    """
+    """Compra una torre básica..."""
+
+    if partida.jugador_actual != "defensor":
+        messagebox.showwarning("No es tu turno", "Solo puedes comprar torres y muros en el turno del defensor.")
+        return
+    
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
         messagebox.showwarning("Casilla no seleccionada", "Primero selecciona una casilla del tablero.")
         return
-
+    
     torre = TorreBasica()
     compra_exitosa = comprar_torre(partida, torre, ventana.fila_seleccionada, ventana.columna_seleccionada, "defensor")
 
@@ -170,6 +185,10 @@ def comprar_torre_pesada_interfaz(ventana, partida):
     Recibe la ventana y la partida.
     No devuelve nada.
     """
+    if partida.jugador_actual != "defensor":
+        messagebox.showwarning("No es tu turno", "Solo puedes comprar torres y muros en el turno del defensor.")
+        return
+    
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
         messagebox.showwarning("Casilla no seleccionada", "Primero selecciona una casilla del tablero.")
         return
@@ -188,6 +207,10 @@ def comprar_torre_magica_interfaz(ventana, partida):
     Recibe la ventana y la partida.
     No devuelve nada.
     """
+    if partida.jugador_actual != "defensor":
+        messagebox.showwarning("No es tu turno", "Solo puedes comprar torres y muros en el turno del defensor.")
+        return
+
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
         messagebox.showwarning("Casilla no seleccionada", "Primero selecciona una casilla del tablero.")
         return
@@ -250,23 +273,31 @@ def seleccionar_casilla_y_objeto(ventana, fila, columna, objeto):
         ventana.label_vida.config(text=f"Vida: {objeto.vida}")
 
 def terminar_turno_interfaz(ventana, partida):
-    """Termina el turno actual y pasa al siguiente jugador.
+    """Termina el turno. Si termina el atacante, las torres atacan automáticamente.
+    Luego se pasa al siguiente jugador y se revisa el fin de ronda.
     Recibe la ventana y la partida.
     No devuelve nada.
     """
+    if partida.jugador_actual == "atacante":
+        combate_automatico(partida)
+
     partida.cambiar_turno()
-    mostrar_tablero(ventana, partida)
+    revisar_fin_de_ronda(ventana, partida)
 
 def seleccionar_atacante(ventana):
     """Guarda el objeto seleccionado como atacante"""
 
     if ventana.objeto_seleccionado is None:
-        messagebox.showwarning( "Sin objeto","Primero selecciona un objeto del tablero.")
+        messagebox.showwarning("Sin objeto", "Primero selecciona un objeto del tablero.")
+        return
+
+    if isinstance(ventana.objeto_seleccionado, (Base, Muro)):
+        messagebox.showwarning("No puede atacar", "La base y los muros no pueden atacar. Selecciona una torre o una unidad.")
         return
 
     ventana.atacante_seleccionado = ventana.objeto_seleccionado
-    messagebox.showinfo("Atacante seleccionado","El atacante fue seleccionado correctamente.")
-
+    messagebox.showinfo("Atacante seleccionado", "El atacante fue seleccionado correctamente.")
+    
 
 def seleccionar_objetivo(ventana):
     """Guarda el objeto seleccionado como objetivo"""
@@ -319,7 +350,20 @@ def atacar_interfaz(ventana, partida):
         messagebox.showinfo("Ataque realizado",f"Daño realizado: {dano_realizado}\nVida restante: {vida_despues}")
 
     # Actualiza el tablero y la información visual
-    mostrar_tablero(ventana, partida)
+    revisar_fin_de_ronda(ventana, partida)
+
+def combate_automatico(partida):
+    """Todas las torres atacan automáticamente a las unidades en su alcance.
+    Recibe la partida.
+    No devuelve nada.
+    """
+    # cada torre ataca a una unidad que tenga en su alcance
+    for torre in list(partida.mapa.torres):
+        for unidad in list(partida.mapa.unidades):
+            if esta_al_alcance(torre, unidad):
+                atacar(torre, unidad, partida.mapa)
+                break   # cada torre ataca a una sola unidad por turno
+            
 #____________________
 
 def mostrar_tablero(ventana, partida):
@@ -502,10 +546,16 @@ def mostrar_ganador(ventana, partida):
 
     ganador = partida.obtener_ganador()
 
+    # obtener el nombre de usuario del jugador ganador según su rol
+    if ganador == "defensor":
+        nombre_ganador = partida.jugador_defensor.usuario
+    else:
+        nombre_ganador = partida.jugador_atacante.usuario
+
     titulo = tk.Label(ventana, text="FIN DE LA PARTIDA", font=("Arial", 24))
     titulo.pack(pady=20)
 
-    mensaje = tk.Label(ventana, text=f"¡Ganó el {ganador}!", font=("Arial", 18))
+    mensaje = tk.Label(ventana, text=f"¡Ganó {nombre_ganador} ({ganador})!", font=("Arial", 18))
     mensaje.pack(pady=10)
 
     boton_salir = tk.Button(ventana, text="Salir", command=ventana.destroy)
