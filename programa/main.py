@@ -15,6 +15,14 @@ def iniciar_juego():
     """Arranca el juego: crea la ventana y muestra el login del defensor."""
     global ventana
     ventana = tk.Tk()
+
+    # Casilla seleccionada para colocar objetos en el tablero
+    ventana.fila_seleccionada = None
+    ventana.columna_seleccionada = None
+
+    # Objeto seleccionado para mover unidades
+    ventana.objeto_seleccionado = None
+
     ventana.title("Defensa y Asalto de Base")
     centrar_ventana(ventana, 400, 300)
     login_defensor()
