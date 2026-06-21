@@ -1,3 +1,5 @@
+from combate import atacar
+
 import tkinter as tk
 from tkinter import messagebox
 from utilidades import centrar_ventana, limpiar_ventana, cargar_imagen, crear_imagen_vacia
@@ -275,6 +277,39 @@ def seleccionar_objetivo(ventana):
 
     ventana.objetivo_seleccionado = ventana.objeto_seleccionado
     messagebox.showinfo("Objetivo seleccionado","El objetivo fue seleccionado correctamente.")
+#____________________
+
+def atacar_interfaz(ventana, partida):
+    """Realiza un ataque usando el atacante y el objetivo seleccionados.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+
+    # Verifica que haya un atacante seleccionado
+    if ventana.atacante_seleccionado is None:
+        messagebox.showwarning("Sin atacante", "Primero selecciona un atacante.")
+        return
+
+    # Verifica que haya un objetivo seleccionado
+    if ventana.objetivo_seleccionado is None:
+        messagebox.showwarning("Sin objetivo","Primero selecciona un objetivo." )
+        return
+
+    # Intenta realizar el ataque usando la función de combate.py
+    ataque_exitoso = atacar(ventana.atacante_seleccionado,ventana.objetivo_seleccionado,partida.mapa)
+
+    # Si el objetivo no estaba al alcance, muestra un mensaje
+    if not ataque_exitoso:
+        messagebox.showerror("Ataque fallido","El objetivo no está al alcance o el ataque no se pudo realizar.")
+        return
+
+    # Si el ataque se realizó correctamente, muestra un mensaje
+    messagebox.showinfo("Ataque realizado","El ataque se realizó correctamente.")
+
+    # Actualiza el tablero y la información visual
+    mostrar_tablero(ventana, partida)
+
+#____________________
 
 def mostrar_tablero(ventana, partida):
     """Muestra el tablero. La primera vez crea toda la interfaz con frames separados
@@ -379,8 +414,12 @@ def mostrar_tablero(ventana, partida):
         boton_seleccionar_objetivo = tk.Button( frame_panel,text="Seleccionar objetivo",width=20, command=lambda: seleccionar_objetivo(ventana))
         boton_seleccionar_objetivo.grid(row=10, column=0, columnspan=2, pady=5)
         
+        # boton para atacar
+        boton_atacar = tk.Button(frame_panel,text="Atacar",width=20,command=lambda: atacar_interfaz(ventana, partida))
+        boton_atacar.grid(row=11, column=0, columnspan=2, pady=5)
+        
         # ----- botón terminar turno -----
-        tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=11, column=0, columnspan=2, pady=15)
+        tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=12, column=0, columnspan=2, pady=15)
 
         tablero_iniciado = True
 
