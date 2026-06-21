@@ -306,3 +306,16 @@ def mostrar_ganador(ventana, partida):
 
     boton_salir = tk.Button(ventana, text="Salir", command=ventana.destroy)
     boton_salir.pack(pady=20)
+
+def revisar_fin_de_ronda(ventana, partida):
+    """Revisa si terminó la ronda y, si hay un ganador de la partida, muestra la pantalla final.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+    partida.registrar_ronda()
+    ganador = partida.obtener_ganador()
+
+    if ganador is not None:
+        mostrar_ganador(ventana, partida)
+    else:
+        mostrar_tablero(ventana, partida)
