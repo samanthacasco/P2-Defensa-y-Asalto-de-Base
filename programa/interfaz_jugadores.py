@@ -15,15 +15,13 @@ def mostrar_menu_jugadores(ventana, al_iniciar_sesion_exito):
     label_titulo.pack(pady=10)
 
     # Pasamos 'ventana' y el callback de éxito al login
-    boton_ingresar = tk.Button(ventana, text="Iniciar Sesión", width=20,
-                               command=lambda: mostrar_login(ventana, al_iniciar_sesion_exito))
+    boton_ingresar = tk.Button(ventana, text="Iniciar Sesión", width=20,command=lambda: mostrar_login(ventana, al_iniciar_sesion_exito))
     boton_ingresar.pack(pady=5) 
     
-    boton_ranking = tk.Button(ventana, text="Ver Ranking", width=20,
-                              command=lambda: mostrar_ranking(ventana, al_iniciar_sesion_exito))
+    boton_ranking = tk.Button(ventana, text="Ver Ranking", width=20, bg="#ffcccc", command=lambda: mostrar_ranking(ventana, al_iniciar_sesion_exito))
     boton_ranking.pack(pady=5) 
     
-    boton_salir = tk.Button(ventana, text="Salir", width=20, command=ventana.destroy)
+    boton_salir = tk.Button(ventana, text="Salir", width=20,bg="#ffcccc", command=ventana.destroy)
     boton_salir.pack(pady=5) 
     
 def mostrar_login(ventana, al_iniciar_sesion_exito):
@@ -76,7 +74,8 @@ def mostrar_ranking(ventana, al_iniciar_sesion_exito):
     limpiar_ventana(ventana)
     centrar_ventana(ventana, 450, 400)
 
-    tk.Label(ventana, text="TOP DEFENSORES", font=("Arial", 11, "bold")).pack(pady=5)
+
+    tk.Label(ventana, text="TOP DEFENSORES",font=("Arial", 11, "bold")).pack(pady=5)
     for jugador in ranking_defensores():
         tk.Label(ventana, text=f"{jugador.usuario}: {jugador.victorias_defensor} victorias").pack()
 
@@ -84,5 +83,4 @@ def mostrar_ranking(ventana, al_iniciar_sesion_exito):
     for jugador in ranking_atacantes():
         tk.Label(ventana, text=f"{jugador.usuario}: {jugador.victorias_atacante} victorias").pack()
         
-    tk.Button(ventana, text="← Regresar", 
-              command=lambda: mostrar_menu_jugadores(ventana, al_iniciar_sesion_exito)).pack(pady=15)
+    tk.Button(ventana, text="← Regresar", command=lambda: mostrar_menu_jugadores(ventana, al_iniciar_sesion_exito)).pack(pady=15)

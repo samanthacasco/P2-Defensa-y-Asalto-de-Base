@@ -40,14 +40,15 @@ def iniciar_juego():
 def login_defensor():
     """Pantalla de login del defensor."""
     limpiar_ventana(ventana)
+    ventana.configure(bg="#e8e2d0")  # color de fondo
 
     tk.Label(ventana, text="LOGIN DEFENSOR", font=("Arial", 12, "bold")).pack(pady=10)
     
-    tk.Label(ventana, text="Usuario:").pack()
+    tk.Label(ventana, text="Usuario:",bg="#e8e2d0").pack()
     entry_usuario = tk.Entry(ventana)
     entry_usuario.pack(pady=5)
     
-    tk.Label(ventana, text="Contraseña:").pack()
+    tk.Label(ventana, text="Contraseña:",bg="#e8e2d0").pack()
     entry_clave = tk.Entry(ventana, show="*")
     entry_clave.pack(pady=5)
 
@@ -82,8 +83,8 @@ def login_defensor():
         else:
             messagebox.showerror("Error", "Ese usuario ya existe")
 
-    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15).pack(pady=5)
-    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15).pack(pady=5)
+    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15,bg="#ffcccc").pack(pady=5)
+    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15,bg="#ffcccc").pack(pady=5)
 
 
 def login_atacante(jugador_defensor_logueado):
@@ -92,11 +93,11 @@ def login_atacante(jugador_defensor_logueado):
 
     tk.Label(ventana, text="LOGIN ATACANTE", font=("Arial", 12, "bold")).pack(pady=10)
     
-    tk.Label(ventana, text="Usuario:").pack()
+    tk.Label(ventana, text="Usuario:", bg="#e8e2d0").pack()
     entry_usuario = tk.Entry(ventana)
     entry_usuario.pack(pady=5)
     
-    tk.Label(ventana, text="Contraseña:").pack()
+    tk.Label(ventana, text="Contraseña:",bg="#e8e2d0").pack()
     entry_clave = tk.Entry(ventana, show="*")
     entry_clave.pack(pady=5)
 
@@ -131,8 +132,8 @@ def login_atacante(jugador_defensor_logueado):
         else:
             messagebox.showerror("Error", "Ese usuario ya existe")
 
-    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15).pack(pady=5)
-    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15).pack(pady=5)
+    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15,bg="#ffcccc").pack(pady=5)
+    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15,bg="#ffcccc").pack(pady=5)
 
 
 def ir_al_menu(jugador_defensor_obj, jugador_atacante_obj):

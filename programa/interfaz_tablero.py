@@ -590,7 +590,7 @@ def mostrar_instrucciones_inicio(partida):
 
 def mostrar_tablero(ventana, partida):
     """Muestra el tablero. La primera vez crea toda la interfaz con frames separados
-    (uno para el tablero y otro para el panel); las siguientes veces solo actualiza
+    (panel izquierdo, tablero central y panel derecho); las siguientes veces solo actualiza
     imágenes y textos, sin recrear (evita el parpadeo).
     Recibe la ventana y la partida.
     No devuelve nada.
@@ -601,78 +601,93 @@ def mostrar_tablero(ventana, partida):
     # La primera vez: crear toda la interfaz
     if not tablero_iniciado:
         limpiar_ventana(ventana)
+        ventana.configure(bg="#e8e2d0")  # color de fondo
 
-        ancho = partida.mapa.columnas * tamano + 500
-        alto = partida.mapa.filas * tamano + 150
+        ancho = partida.mapa.columnas * tamano + 520
+        alto = partida.mapa.filas * tamano + 80
         centrar_ventana(ventana, ancho, alto)
 
         ventana.imagenes = []
         ventana.imagen_vacia = crear_imagen_vacia(tamano)
         ventana.botones = []
 
-        # ===== FRAME DEL TABLERO (izquierda) =====
+        # Permite que el tablero quede en el centro de la ventana
+        ventana.grid_columnconfigure(0, weight=1)
+        ventana.grid_columnconfigure(1, weight=0)
+        ventana.grid_columnconfigure(2, weight=1)
+
+        # ===== PANEL IZQUIERDO: información =====
+        frame_info = tk.Frame(ventana, bg="#e8e2d0")
+        frame_info.grid(row=0, column=0, padx=15, pady=10, sticky="n")
+
+        # ----- info de la partida -----
+        tk.Label(frame_info, text="Información", font=("Arial", 12, "bold")).grid(row=0, column=0, sticky="w", pady=(0, 8))
+
+        ventana.label_atacante = tk.Label(frame_info, text=f"Dinero atacante: {partida.dinero_atacante}", justify="left", fg="#c82558", bg="#e8e2d0", font=("Arial", 9),wraplength=210)
+        ventana.label_atacante.grid(row=1, column=0, sticky="w", pady=4)
+
+        ventana.label_defensor = tk.Label(frame_info, text=f"Dinero defensor: {partida.dinero_defensor}", justify="left", fg="#c82558",bg="#e8e2d0", font=("Arial", 9),wraplength=210)
+        ventana.label_defensor.grid(row=2, column=0, sticky="w", pady=4)
+
+        ventana.label_turno = tk.Label(frame_info, text=f"Turno: {partida.turno}", justify="left", fg="#c82558", bg="#e8e2d0",font=("Arial", 9),wraplength=210)
+        ventana.label_turno.grid(row=3, column=0, sticky="w", pady=4)
+
+        ventana.label_jugador = tk.Label(frame_info, text=f"Jugador actual: {partida.jugador_actual}", justify="left", fg="#c82558", bg="#e8e2d0",font=("Arial", 9),wraplength=210)
+        ventana.label_jugador.grid(row=4, column=0, sticky="w", pady=4)
+
+        ventana.label_rondas_defensor = tk.Label(frame_info, text=f"Rondas defensor: {partida.rondas_defensor}", justify="left", fg="#c82558",bg="#e8e2d0", font=("Arial", 9),wraplength=210)
+        ventana.label_rondas_defensor.grid(row=5, column=0, sticky="w", pady=4)
+
+        ventana.label_rondas_atacante = tk.Label(frame_info, text=f"Rondas atacante: {partida.rondas_atacante}", justify="left", fg="#c82558", bg="#e8e2d0",font=("Arial", 9),wraplength=210)
+        ventana.label_rondas_atacante.grid(row=6, column=0, sticky="w", pady=4)
+
+        # ----- información de selección -----
+        tk.Label(frame_info, text="Selección", font=("Arial", 12, "bold")).grid(row=7, column=0, sticky="w", pady=(18, 8))
+
+        ventana.label_casilla = tk.Label(frame_info, text="Casilla seleccionada: Ninguna", justify="left", fg="#c82558",bg="#e8e2d0", font=("Arial", 9),wraplength=210)
+        ventana.label_casilla.grid(row=8, column=0, sticky="w", pady=4)
+
+        ventana.label_objeto = tk.Label(frame_info, text="Objeto seleccionado: Ninguno", justify="left", fg="#c82558", bg="#e8e2d0",font=("Arial", 9),wraplength=210)
+        ventana.label_objeto.grid(row=9, column=0, sticky="w", pady=4)
+
+        ventana.label_vida = tk.Label(frame_info, text="Vida: -", justify="left", fg="#c82558",bg="#e8e2d0", font=("Arial", 9),wraplength=210)
+        ventana.label_vida.grid(row=10, column=0, sticky="w", pady=4)
+
+        # ----- guía de ayuda según el turno -----
+        tk.Label(frame_info, text="Ayuda", font=("Arial", 12, "bold")).grid(row=11, column=0, sticky="w", pady=(18, 8))
+
+        ventana.label_ayuda = tk.Label(frame_info, text=texto_ayuda(partida),justify="left", fg="#c82558",bg="#e8e2d0", font=("Arial", 9),wraplength=210)
+        ventana.label_ayuda.grid(row=12, column=0, sticky="w", pady=4)
+
+        # ===== FRAME CENTRAL: tablero =====
         frame_tablero = tk.Frame(ventana)
-        frame_tablero.grid(row=0, column=0, padx=10, pady=10, sticky="n")
+        frame_tablero.grid(row=0, column=1, padx=10, pady=10, sticky="n")
 
         for fila in range(partida.mapa.filas):
             fila_botones = []
             for columna in range(partida.mapa.columnas):
-                boton = tk.Button(frame_tablero, width=tamano, height=tamano,
-                                  command=lambda f=fila, c=columna: seleccionar_casilla_y_objeto(ventana, f, c, partida.mapa.matriz[f][c]))
+                boton = tk.Button(frame_tablero, width=tamano, height=tamano, command=lambda f=fila, c=columna: seleccionar_casilla_y_objeto(ventana, f, c, partida.mapa.matriz[f][c]))
                 boton.grid(row=fila, column=columna)
                 fila_botones.append(boton)
             ventana.botones.append(fila_botones)
 
-        # ===== FRAME DEL PANEL (derecha) =====
-        frame_panel = tk.Frame(ventana)
-        frame_panel.grid(row=0, column=1, padx=20, pady=10, sticky="n")
+        # ===== PANEL DERECHO: acciones =====
+        frame_panel = tk.Frame(ventana, bg="#e8e2d0")
+        frame_panel.grid(row=0, column=2, padx=15, pady=10, sticky="n")
 
-        # ----- info de la partida -----
-        ventana.label_atacante = tk.Label(frame_panel, text=f"Dinero atacante: {partida.dinero_atacante}")
-        ventana.label_atacante.grid(row=0, column=0, padx=10, pady=4)
-
-        ventana.label_defensor = tk.Label(frame_panel, text=f"Dinero defensor: {partida.dinero_defensor}")
-        ventana.label_defensor.grid(row=0, column=1, padx=10, pady=4)
-
-        ventana.label_turno = tk.Label(frame_panel, text=f"Turno: {partida.turno}")
-        ventana.label_turno.grid(row=1, column=0, padx=10, pady=4)
-
-        ventana.label_jugador = tk.Label(frame_panel, text=f"Jugador actual: {partida.jugador_actual}")
-        ventana.label_jugador.grid(row=1, column=1, padx=10, pady=4)
-
-        ventana.label_rondas_defensor = tk.Label(frame_panel, text=f"Rondas defensor: {partida.rondas_defensor}")
-        ventana.label_rondas_defensor.grid(row=2, column=0, padx=10, pady=4)
-
-        ventana.label_rondas_atacante = tk.Label(frame_panel, text=f"Rondas atacante: {partida.rondas_atacante}")
-        ventana.label_rondas_atacante.grid(row=2, column=1, padx=10, pady=4)
-
-        # ----- información de selección -----
-        ventana.label_casilla = tk.Label(frame_panel,text="Casilla seleccionada: Ninguna")
-        ventana.label_casilla.grid(row=6, column=0, columnspan=2, pady=4)
-
-        ventana.label_objeto = tk.Label(frame_panel,text="Objeto seleccionado: Ninguno")
-        ventana.label_objeto.grid(row=7, column=0, columnspan=2, pady=4)
-
-        # Muestra la vida del objeto seleccionado
-        ventana.label_vida = tk.Label(frame_panel, text="Vida: -")
-        ventana.label_vida.grid(row=8, column=0, columnspan=2, pady=4)
-
-        # ----- guía de ayuda según el turno -----
-        ventana.label_ayuda = tk.Label(frame_panel, text=texto_ayuda(partida),
-                                       justify="left", fg="#1a5e3a", font=("Arial", 9))
-        ventana.label_ayuda.grid(row=14, column=0, columnspan=2, pady=10)
+        tk.Label(frame_panel, text="Acciones", font=("Arial", 12, "bold")).grid(row=0, column=0, columnspan=2, pady=(0, 8))
 
         # ----- frame de compras del atacante -----
-        frame_atacante = tk.LabelFrame(frame_panel, text="Atacante", padx=10, pady=10)
-        frame_atacante.grid(row=3, column=0, padx=10, pady=10, sticky="n")
+        frame_atacante = tk.LabelFrame(frame_panel, text="Atacante", padx=10, pady=10, bg="#ffcccc")
+        frame_atacante.grid(row=1, column=0, padx=10, pady=10, sticky="n")
 
         tk.Button(frame_atacante, text="Comprar Soldado", width=18, command=lambda: comprar_soldado_interfaz(ventana, partida)).grid(row=0, column=0, pady=3)
         tk.Button(frame_atacante, text="Comprar Tanque", width=18, command=lambda: comprar_tanque_interfaz(ventana, partida)).grid(row=1, column=0, pady=3)
         tk.Button(frame_atacante, text="Comprar Unidad Rápida", width=18, command=lambda: comprar_unidad_rapida_interfaz(ventana, partida)).grid(row=2, column=0, pady=3)
 
         # ----- frame de compras del defensor -----
-        frame_defensor = tk.LabelFrame(frame_panel, text="Defensor", padx=10, pady=10)
-        frame_defensor.grid(row=3, column=1, padx=10, pady=10, sticky="n")
+        frame_defensor = tk.LabelFrame(frame_panel, text="Defensor", padx=10, pady=10, bg="#ffcccc")
+        frame_defensor.grid(row=1, column=1, padx=10, pady=10, sticky="n")
 
         tk.Button(frame_defensor, text="Comprar Muro", width=18, command=lambda: comprar_muro_interfaz(ventana, partida)).grid(row=0, column=0, pady=3)
         tk.Button(frame_defensor, text="Comprar Torre Básica", width=18, command=lambda: comprar_torre_basica_interfaz(ventana, partida)).grid(row=1, column=0, pady=3)
@@ -680,8 +695,8 @@ def mostrar_tablero(ventana, partida):
         tk.Button(frame_defensor, text="Comprar Torre Mágica", width=18, command=lambda: comprar_torre_magica_interfaz(ventana, partida)).grid(row=3, column=0, pady=3)
 
         # ----- frame de movimiento (cruz) -----
-        frame_flechas = tk.LabelFrame(frame_panel, text="Mover", padx=10, pady=10)
-        frame_flechas.grid(row=4, column=0, columnspan=2, pady=15)
+        frame_flechas = tk.LabelFrame(frame_panel, text="Mover", padx=10, pady=10, bg="#ffcccc")
+        frame_flechas.grid(row=2, column=0, columnspan=2, pady=15)
 
         tk.Button(frame_flechas, text="↑", width=4, command=lambda: mover_arriba_interfaz(ventana, partida)).grid(row=0, column=1)
         tk.Button(frame_flechas, text="←", width=4, command=lambda: mover_izquierda_interfaz(ventana, partida)).grid(row=1, column=0)
@@ -689,31 +704,30 @@ def mostrar_tablero(ventana, partida):
         tk.Button(frame_flechas, text="→", width=4, command=lambda: mover_derecha_interfaz(ventana, partida)).grid(row=1, column=2)
 
         # Botón para seleccionar atacante
-        boton_seleccionar_atacante = tk.Button(frame_panel,text="Seleccionar atacante",width=20,command=lambda: seleccionar_atacante(ventana))
-        boton_seleccionar_atacante.grid(row=9, column=0, columnspan=2, pady=5)
+        boton_seleccionar_atacante = tk.Button(frame_panel, text="Seleccionar atacante", width=20, bg="#ffcccc", command=lambda: seleccionar_atacante(ventana))
+        boton_seleccionar_atacante.grid(row=3, column=0, columnspan=2, pady=5)
 
         # Botón para seleccionar objetivo
-        boton_seleccionar_objetivo = tk.Button( frame_panel,text="Seleccionar objetivo",width=20, command=lambda: seleccionar_objetivo(ventana))
-        boton_seleccionar_objetivo.grid(row=10, column=0, columnspan=2, pady=5)
-        
-        # boton para atacar
-        boton_atacar = tk.Button(frame_panel,text="Atacar",width=20,command=lambda: atacar_interfaz(ventana, partida))
-        boton_atacar.grid(row=11, column=0, columnspan=2, pady=5)
-        
-        # boton para activar habilidad
-        boton_habilidad = tk.Button(frame_panel,text="Activar habilidad",width=20,command=lambda: activar_habilidad_interfaz(ventana, partida))
+        boton_seleccionar_objetivo = tk.Button(frame_panel, text="Seleccionar objetivo", width=20, bg="#ffcccc", command=lambda: seleccionar_objetivo(ventana))
+        boton_seleccionar_objetivo.grid(row=4, column=0, columnspan=2, pady=5)
 
-        boton_habilidad.grid(row=12, column=0, columnspan=2, pady=5)
+        # boton para atacar
+        boton_atacar = tk.Button(frame_panel, text="Atacar", width=20, bg="#ffcccc", command=lambda: atacar_interfaz(ventana, partida))
+        boton_atacar.grid(row=5, column=0, columnspan=2, pady=5)
+
+        # boton para activar habilidad
+        boton_habilidad = tk.Button(frame_panel, text="Activar habilidad", width=20, bg="#ffcccc", command=lambda: activar_habilidad_interfaz(ventana, partida))
+        boton_habilidad.grid(row=6, column=0, columnspan=2, pady=5)
 
         # botón para iniciar la fase de combate (las torres atacan)
-        boton_combate = tk.Button(frame_panel, text="Iniciar combate", width=20, command=lambda: iniciar_combate_interfaz(ventana, partida))
-        boton_combate.grid(row=13, column=0, columnspan=2, pady=5)
+        boton_combate = tk.Button(frame_panel, text="Iniciar combate", width=20, bg="#ffcccc", command=lambda: iniciar_combate_interfaz(ventana, partida))
+        boton_combate.grid(row=7, column=0, columnspan=2, pady=5)
 
         # ----- botón terminar turno -----
-        tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=15, column=0, columnspan=2, pady=15)
+        tk.Button(frame_panel, text="Terminar turno", width=20, bg="#ffcccc", command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=8, column=0, columnspan=2, pady=15)
 
         # botón para regresar al menú durante la partida
-        tk.Button(frame_panel, text="← Regresar al menú", width=20, command=lambda: regresar_al_menu(ventana, partida)).grid(row=16, column=0, columnspan=2, pady=5)
+        tk.Button(frame_panel, text="← Regresar al menú", width=20, bg="#ffcccc", command=lambda: regresar_al_menu(ventana, partida)).grid(row=9, column=0, columnspan=2, pady=5)
 
         tablero_iniciado = True
 
@@ -723,7 +737,6 @@ def mostrar_tablero(ventana, partida):
     # Siempre: actualizar imágenes de casillas y textos del panel
     actualizar_casillas(ventana, partida, tamano)
     actualizar_info(ventana, partida)
-
 
 def actualizar_casillas(ventana, partida, tamano):
     """Actualiza solo las imágenes de las casillas, sin recrear los botones.
@@ -786,6 +799,7 @@ def mostrar_ganador(ventana, partida):
     No devuelve nada.
     """
     limpiar_ventana(ventana)
+    
 
     partida.actualizar_victorias()
 

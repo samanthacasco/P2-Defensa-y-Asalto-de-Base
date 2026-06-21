@@ -15,19 +15,16 @@ def elegir_faccion_defensor(ventana, partida):
     limpiar_ventana(ventana)
 
     titulo = tk.Label(ventana, text="Defensor, elige tu facción")
-    titulo.pack()
+    titulo.pack(pady=15)
 
-    boton_medieval = tk.Button(ventana, text="Medieval",
-                               command=lambda: elegir_defensor(Medieval()))
-    boton_medieval.pack()
+    boton_medieval = tk.Button(ventana, text="Medieval", width=15, bg="#ffcccc",command=lambda: elegir_defensor(Medieval()))
+    boton_medieval.pack(pady=6)
 
-    boton_futurista = tk.Button(ventana, text="Futurista",
-                                command=lambda: elegir_defensor(Futurista()))
-    boton_futurista.pack()
+    boton_futurista = tk.Button(ventana, text="Futurista", width=15, bg="#ffcccc",command=lambda: elegir_defensor(Futurista()))
+    boton_futurista.pack(pady=6)
 
-    boton_naturaleza = tk.Button(ventana, text="Naturaleza",
-                                 command=lambda: elegir_defensor(Naturaleza()))
-    boton_naturaleza.pack()
+    boton_naturaleza = tk.Button(ventana, text="Naturaleza", width=15, bg="#ffcccc",command=lambda: elegir_defensor(Naturaleza()))
+    boton_naturaleza.pack(pady=6)
 
 def elegir_faccion_atacante(ventana, partida):
     """Muestra la pantalla para que el atacante elija su facción.
@@ -40,12 +37,11 @@ def elegir_faccion_atacante(ventana, partida):
     limpiar_ventana(ventana)
 
     titulo = tk.Label(ventana, text="Atacante, elige tu facción")
-    titulo.pack()
+    titulo.pack(pady=15)
 
     facciones = [Medieval(), Futurista(), Naturaleza()]
     
     for faccion in facciones:
         if faccion.nombre != partida.faccion_defensor.nombre:
-            boton = tk.Button(ventana, text=faccion.nombre,
-                              command=lambda f=faccion: elegir_atacante(f))
-            boton.pack()
+            boton = tk.Button(ventana, text=faccion.nombre, width=15, bg="#ffcccc",command=lambda f=faccion: elegir_atacante(f))
+            boton.pack(pady=6)

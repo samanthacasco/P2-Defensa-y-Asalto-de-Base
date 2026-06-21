@@ -19,10 +19,9 @@ def mostrar_menu_principal(ventana, al_iniciar_juego):
     tk.Label(ventana, text="DEFENSA Y ASALTO DE BASE", font=("Arial", 16, "bold")).pack(pady=20)
     tk.Label(ventana, text="Menú principal").pack(pady=5)
 
-    tk.Button(ventana, text="Iniciar juego", width=20, command=al_iniciar_juego).pack(pady=10)
-    tk.Button(ventana, text="Ranking", width=20,
-              command=lambda: mostrar_ranking(ventana, al_iniciar_juego)).pack(pady=10)
-    tk.Button(ventana, text="Salir", width=20, command=ventana.destroy).pack(pady=10)
+    tk.Button(ventana, text="Iniciar juego", width=20,bg="#ffcccc", command=al_iniciar_juego).pack(pady=10)
+    tk.Button(ventana, text="Ranking", width=20,bg="#ffcccc",command=lambda: mostrar_ranking(ventana, al_iniciar_juego)).pack(pady=10)
+    tk.Button(ventana, text="Salir", width=20,bg="#ffcccc", command=ventana.destroy).pack(pady=10)
 
 
 def mostrar_ranking(ventana, al_iniciar_juego):
@@ -34,8 +33,7 @@ def mostrar_ranking(ventana, al_iniciar_juego):
     centrar_ventana(ventana, 450, 500)
 
     # botón regresar al menú
-    tk.Button(ventana, text="← Regresar al menú",
-              command=lambda: mostrar_menu_principal(ventana, al_iniciar_juego)).pack(anchor="w", padx=10, pady=10)
+    tk.Button(ventana, text="← Regresar al menú", bg="#ffcccc",command=lambda: mostrar_menu_principal(ventana, al_iniciar_juego)).pack(anchor="w", padx=10, pady=10)
 
     tk.Label(ventana, text="RANKING DE JUGADORES", font=("Arial", 14, "bold")).pack(pady=10)
 
@@ -48,7 +46,7 @@ def mostrar_ranking(ventana, al_iniciar_juego):
     else:
         posicion = 1
         for jugador in top_def:
-            tk.Label(ventana, text=f"{posicion}. {jugador.usuario} - {jugador.victorias_defensor} victorias").pack()
+            tk.Label(ventana, text=f"{posicion}. {jugador.usuario} - {jugador.victorias_defensor} victorias", bg="#e8e2d0").pack()
             posicion += 1
 
     # ----- top atacantes -----
@@ -60,5 +58,5 @@ def mostrar_ranking(ventana, al_iniciar_juego):
     else:
         posicion = 1
         for jugador in top_atac:
-            tk.Label(ventana, text=f"{posicion}. {jugador.usuario} - {jugador.victorias_atacante} victorias").pack()
+            tk.Label(ventana, text=f"{posicion}. {jugador.usuario} - {jugador.victorias_atacante} victorias",bg="#e8e2d0").pack()
             posicion += 1
