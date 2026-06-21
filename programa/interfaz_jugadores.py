@@ -2,108 +2,87 @@ import tkinter as tk
 from utilidades import centrar_ventana, limpiar_ventana
 from jugador import login, registrar, ranking_defensores, ranking_atacantes
 from tkinter import messagebox
-def mostrar_menu():
-    """Dibuja la pantalla del menú principal en la ventana.
-    Limpia la ventana y muestra el título y los botones para
-    iniciar sesión y ver el ranking. No recibe ni devuelve nada.
-    """
+
+# NOTA: Ya NO usamos "global ventana" creado aquí adentro. 
+# Ahora todas las funciones reciben la 'ventana' desde afuera.
+
+def mostrar_menu_jugadores(ventana, al_iniciar_sesion_exito):
+    """Dibuja la pantalla de gestión de usuarios usando la ventana principal."""
     limpiar_ventana(ventana)  
+    centrar_ventana(ventana, 400, 300)
 
-    label_titulo = tk.Label(ventana, text="Menu Principal")
-    label_titulo.pack()
+    label_titulo = tk.Label(ventana, text="Gestión de Jugadores", font=("Arial", 14, "bold"))
+    label_titulo.pack(pady=10)
 
-    boton_ingresar = tk.Button(ventana, text="Iniciar sesion", command=mostrar_login)
-    boton_ingresar.pack() 
+    # Pasamos 'ventana' y el callback de éxito al login
+    boton_ingresar = tk.Button(ventana, text="Iniciar Sesión", width=20,
+                               command=lambda: mostrar_login(ventana, al_iniciar_sesion_exito))
+    boton_ingresar.pack(pady=5) 
     
-    boton_ranking = tk.Button(ventana, text="Ver Ranking", command=mostrar_ranking)
-    boton_ranking.pack() 
+    boton_ranking = tk.Button(ventana, text="Ver Ranking", width=20,
+                              command=lambda: mostrar_ranking(ventana, al_iniciar_sesion_exito))
+    boton_ranking.pack(pady=5) 
     
-    boton_salir= tk.Button(ventana, text="Salir", command= ventana.destroy)
-    boton_salir.pack() 
+    boton_salir = tk.Button(ventana, text="Salir", width=20, command=ventana.destroy)
+    boton_salir.pack(pady=5) 
     
-def mostrar_login():
-    """
-    Limpia la ventana y dibuja la ventana donde muestran los campos para agregar
-    el nombre y la clave del usuario y tres botones, uno para iniciar sesion, 
-    otro para registrarse y uno de regresar. No recibe ni devuelve nada
-    """
-    def intentar_login():
-        usuario = entry_usuario.get()
-        clave = entry_clave.get()
-        resultado = login(usuario, clave)
-        if resultado == None:
-            messagebox.showinfo("Error", "Usuario o clave incorrecta")
-        else:
-            messagebox.showinfo("Exito", f"Bienvenido {resultado.usuario}")
-            
-    def intentar_registrar():
-        usuario = entry_usuario.get()
-        clave = entry_clave.get()
-        resultado = registrar(usuario, clave)
-        if resultado == False:
-            messagebox.showinfo("Error","El usuario ya esta registado, Inicia Sesion")
-        else:
-            messagebox.showinfo("Exito","El usuario fue registrado")
-     
-    limpiar_ventana(ventana)  
-
-    label_usuario = tk.Label(ventana, text="Usuario:")
-    label_usuario.pack()
+def mostrar_login(ventana, al_iniciar_sesion_exito):
+    """Campos para iniciar sesión o registrarse."""
+    limpiar_ventana(ventana)
+    
+    tk.Label(ventana, text="INICIAR SESIÓN", font=("Arial", 12, "bold")).pack(pady=10)
+    
+    tk.Label(ventana, text="Usuario:").pack()
     entry_usuario = tk.Entry(ventana)
     entry_usuario.pack()
-
-    label_clave = tk.Label(ventana, text="Contraseña:")
-    label_clave.pack()
+    
+    tk.Label(ventana, text="Clave:").pack()
     entry_clave = tk.Entry(ventana, show="*")
     entry_clave.pack()
 
-    boton_login = tk.Button(ventana, text="Iniciar sesión", command=intentar_login)
-    boton_login.pack()
-
-    boton_registrar = tk.Button(ventana, text="Registrarse", command=intentar_registrar)
-    boton_registrar.pack()
-    
-    boton_regresar = tk.Button(ventana, text="Regresar", command=mostrar_menu)
-    boton_regresar.pack()
-
-def mostrar_ranking():
-    """
-    Limpia la ventana y dibuja la ventana donde se muestra la lista de los top 5
-    de defensores y atacantes registrados con sus victorias ordenados de mayor a menor.
-    No recibe ni devuelve nada"""
-    limpiar_ventana(ventana)
-
-    titulo_def = tk.Label(ventana, text="TOP DEFENSORES")
-    titulo_def.pack()
-    for jugador in ranking_defensores():
-        label_defensor = tk.Label(ventana, text=f"{jugador.usuario}: {jugador.victorias_defensor}")
-        label_defensor.pack()
-
-    titulo_atac = tk.Label(ventana, text="TOP ATACANTES")
-    titulo_atac.pack()
-    for jugador in ranking_atacantes():
-        label_atacante = tk.Label(ventana, text=f"{jugador.usuario}: {jugador.victorias_atacante}")
-        label_atacante.pack()
+    def intentar_login():
+        usuario = entry_usuario.get()
+        clave = entry_clave.get()
+        jugador_logeado = login(usuario, clave)
         
-    boton_regresar = tk.Button(ventana, text="Regresar", command=mostrar_menu)
-    boton_regresar.pack()
+        if jugador_logeado is not None:
+            messagebox.showinfo("Éxito", f"¡Bienvenido {usuario}!")
+            # Si el login es exitoso, ejecutamos la función que nos pasaron desde main.py
+            al_iniciar_sesion_exito(jugador_logeado)
+        else:
+            messagebox.showerror("Error", "Usuario o clave incorrectos")
 
-def iniciar():
-    """Crea y configura la ventana principal y arranca la aplicación en el menú."""
+    def intentar_registrar():
+        usuario = entry_usuario.get()
+        clave = entry_clave.get()
+        if usuario == "" or clave == "":
+            messagebox.showwarning("Advertencia", "No se pueden usar campos vacíos")
+            return
+            
+        if registrar(usuario, clave):
+            messagebox.showinfo("Éxito", "Usuario registrado. Ya puedes iniciar sesión.")
+        else:
+            messagebox.showerror("Error", "Ese usuario ya existe")
 
-    global ventana
-    ventana = tk.Tk()
+    tk.Button(ventana, text="Ingresar", command=intentar_login).pack(pady=5)
+    tk.Button(ventana, text="Registrarse", command=intentar_registrar).pack(pady=5)
+    
+    # Botón para volver atrás
+    tk.Button(ventana, text="← Regresar", 
+              command=lambda: mostrar_menu_jugadores(ventana, al_iniciar_sesion_exito)).pack(pady=10)
 
-    # Casilla seleccionada para colocar objetos
-    ventana.fila_seleccionada = None
-    ventana.columna_seleccionada = None
+def mostrar_ranking(ventana, al_iniciar_sesion_exito):
+    """Muestra el top 5 de defensores y atacantes."""
+    limpiar_ventana(ventana)
+    centrar_ventana(ventana, 450, 400)
 
-    # Objeto seleccionado para mover unidades
-    ventana.objeto_seleccionado = None
+    tk.Label(ventana, text="TOP DEFENSORES", font=("Arial", 11, "bold")).pack(pady=5)
+    for jugador in ranking_defensores():
+        tk.Label(ventana, text=f"{jugador.usuario}: {jugador.victorias_defensor} victorias").pack()
 
-    ventana.title("Defensa y Asalto de Base")
-    centrar_ventana(ventana, 400, 300)
-    ventana.resizable(False, False)
-
-    mostrar_menu()
-    ventana.mainloop()  
+    tk.Label(ventana, text="TOP ATACANTES", font=("Arial", 11, "bold")).pack(pady=(15, 5))
+    for jugador in ranking_atacantes():
+        tk.Label(ventana, text=f"{jugador.usuario}: {jugador.victorias_atacante} victorias").pack()
+        
+    tk.Button(ventana, text="← Regresar", 
+              command=lambda: mostrar_menu_jugadores(ventana, al_iniciar_sesion_exito)).pack(pady=15)
