@@ -208,7 +208,8 @@ def mostrar_tablero(ventana, partida):
         tablero_iniciado = True
     
     ventana.imagenes = [] 
-    
+    ventana.imagen_vacia = crear_imagen_vacia(tamano) 
+  
     # mostrar dinero del defensor
     label_defensor = tk.Label(ventana, text=f"Dinero defensor: {partida.dinero_defensor}")
     label_defensor.grid(row=0, column=22, padx=15)
