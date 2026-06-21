@@ -23,6 +23,12 @@ def iniciar_juego():
     # Objeto seleccionado para mover unidades
     ventana.objeto_seleccionado = None
 
+    # Objeto que realizará el ataque
+    ventana.atacante_seleccionado = None
+
+    # Objeto que recibirá el ataque
+    ventana.objetivo_seleccionado = None
+
     ventana.title("Defensa y Asalto de Base")
     centrar_ventana(ventana, 400, 300)
     login_defensor()
@@ -97,6 +103,5 @@ def crear_partida(jugador_defensor, jugador_atacante):
     global partida
     partida = Partida(jugador_defensor, jugador_atacante)
     elegir_faccion_defensor(ventana, partida)
-
 
 iniciar_juego()
