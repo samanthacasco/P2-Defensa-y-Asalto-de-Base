@@ -138,12 +138,22 @@ class Mapa:
         objeto.posicion = (nueva_fila, nueva_columna)
 
         return True # el movimiento se realizó correctamente
+    
+        # Usa la velocidad normal de la unidad
+        velocidad = unidad.velocidad
 
+        # Si la unidad tiene aumento de velocidad activo,
+        # se suma una casilla extra y luego se desactiva la habilidad
+        if unidad.velocidad_aumentada:
+            velocidad += 1
+            unidad.velocidad_aumentada = False
+
+        return velocidad
 
     def mover_arriba(self, objeto):
-        """Mueve una unidad una casilla hacia arriba
-        Recibe la unidad a mover
-        Devuelve True si el movimiento se realizó o False en caso contrario
+        """Mueve una unidad hacia arriba según su velocidad.
+        Recibe la unidad a mover.
+        Devuelve True si el movimiento se realizó o False en caso contrario.
         """
 
         if objeto.posicion is None:
@@ -151,46 +161,46 @@ class Mapa:
 
         fila, columna = objeto.posicion
 
-        return self.mover_objeto(objeto, fila - 1, columna)
+        velocidad = self.obtener_velocidad_movimiento(objeto)
+
+        return self.mover_objeto(objeto, fila - velocidad, columna)
 
 
     def mover_abajo(self, objeto):
-        """Mueve una unidad una casilla hacia abajo
-        Recibe la unidad a mover
-        Devuelve True si el movimiento se realizó o False en caso contrario
-        """
+        """Mueve una unidad hacia abajo según su velocidad."""
 
         if objeto.posicion is None:
             return False
 
         fila, columna = objeto.posicion
 
-        return self.mover_objeto(objeto, fila + 1, columna)
+        velocidad = self.obtener_velocidad_movimiento(objeto)
+
+        return self.mover_objeto(objeto, fila + velocidad, columna)
 
 
     def mover_izquierda(self, objeto):
-        """Mueve una unidad una casilla hacia la izquierda
-        Recibe la unidad a mover
-        Devuelve True si el movimiento se realizó o False en caso contrario
-        """
+        """Mueve una unidad hacia la izquierda según su velocidad."""
 
         if objeto.posicion is None:
             return False
 
         fila, columna = objeto.posicion
 
-        return self.mover_objeto(objeto, fila, columna - 1)
+        velocidad = self.obtener_velocidad_movimiento(objeto)
+
+        return self.mover_objeto(objeto, fila, columna - velocidad)
 
 
     def mover_derecha(self, objeto):
-        """Mueve una unidad una casilla hacia la derecha
-        Recibe la unidad a mover
-        Devuelve True si el movimiento se realizó o False en caso contrario
-        """
+        """Mueve una unidad hacia la derecha según su velocidad."""
 
         if objeto.posicion is None:
             return False
 
         fila, columna = objeto.posicion
 
-        return self.mover_objeto(objeto, fila, columna + 1)
+        velocidad = self.obtener_velocidad_movimiento(objeto)
+
+        return self.mover_objeto(objeto, fila, columna + velocidad)
+    
