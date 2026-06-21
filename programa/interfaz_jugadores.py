@@ -93,9 +93,17 @@ def iniciar():
 
     global ventana
     ventana = tk.Tk()
+
+    # Casilla seleccionada para colocar objetos
+    ventana.fila_seleccionada = None
+    ventana.columna_seleccionada = None
+
+    # Objeto seleccionado para mover unidades
+    ventana.objeto_seleccionado = None
+
     ventana.title("Defensa y Asalto de Base")
     centrar_ventana(ventana, 400, 300)
     ventana.resizable(False, False)
 
-    mostrar_menu()          
-    ventana.mainloop()     
+    mostrar_menu()
+    ventana.mainloop()  
