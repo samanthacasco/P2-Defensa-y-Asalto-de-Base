@@ -5,7 +5,7 @@ from modelo import (Base, Muro, Torre, Unidad, TorreBasica, TorrePesada, TorreMa
                     Soldado, Tanque, UnidadRapida)
 from economia import comprar_unidad, comprar_torre, comprar_muro
 from combate import atacar, esta_al_alcance
-from habilidades import ataque_doble, disparo_doble, danio_aumentado, congelar
+from habilidades import (ataque_doble, disparo_doble, danio_aumentado, congelar, escudo_temporal, aumento_velocidad)
 
 
 tablero_iniciado = False
@@ -315,27 +315,51 @@ def seleccionar_objetivo(ventana):
 def ejecutar_ataque_con_habilidad(atacante, objetivo, mapa):
     """Ejecuta el ataque correspondiente según el tipo de atacante.
     Recibe el atacante, el objetivo y el mapa.
-    Devuelve True si el ataque se realizó o False en caso contrario.
+    Devuelve el resultado del ataque y el nombre de la habilidad usada.
     """
 
-    # Si el atacante es un soldado, usa su habilidad de ataque doble
+    # Guarda cuántos turnos llevaba antes del ataque
+    turnos_antes = atacante.turnos_transcurridos
+
+    # Soldado: ataque doble
     if isinstance(atacante, Soldado):
-        return ataque_doble(atacante, objetivo, mapa)
+        resultado = ataque_doble(atacante, objetivo, mapa)
 
-    # Si el atacante es una torre básica, usa disparo doble
+        if turnos_antes + 1 >= atacante.tiempo_activacion:
+            return resultado, "Ataque doble"
+
+        return resultado, None
+
+    # Torre básica: disparo doble
     elif isinstance(atacante, TorreBasica):
-        return disparo_doble(atacante, objetivo, mapa)
+        resultado = disparo_doble(atacante, objetivo, mapa)
 
-    # Si el atacante es una torre pesada, usa daño aumentado
+        if turnos_antes + 1 >= atacante.tiempo_activacion:
+            return resultado, "Disparo doble"
+
+        return resultado, None
+
+    # Torre pesada: daño aumentado
     elif isinstance(atacante, TorrePesada):
-        return danio_aumentado(atacante, objetivo, mapa)
+        resultado = danio_aumentado(atacante, objetivo, mapa)
 
-    # Si el atacante es una torre mágica, usa congelar
+        if turnos_antes + 1 >= atacante.tiempo_activacion:
+            return resultado, "Daño aumentado"
+
+        return resultado, None
+
+    # Torre mágica: congelar
     elif isinstance(atacante, TorreMagica):
-        return congelar(atacante, objetivo, mapa)
+        resultado = congelar(atacante, objetivo, mapa)
 
-    # Si no tiene una habilidad de ataque especial, ataca normal
-    return atacar(atacante, objetivo, mapa)
+        if turnos_antes + 1 >= atacante.tiempo_activacion:
+            return resultado, "Congelar"
+
+        return resultado, None
+
+    # Si no tiene habilidad ofensiva, ataca normal
+    resultado = atacar(atacante, objetivo, mapa)
+    return resultado, None
 
 
 def atacar_interfaz(ventana, partida):
@@ -358,7 +382,7 @@ def atacar_interfaz(ventana, partida):
     vida_antes = ventana.objetivo_seleccionado.vida
 
     # Intenta realizar el ataque usando la función de combate.py
-    ataque_exitoso = ejecutar_ataque_con_habilidad(ventana.atacante_seleccionado,ventana.objetivo_seleccionado,partida.mapa)
+    ataque_exitoso , habilidad_usada = ejecutar_ataque_con_habilidad(ventana.atacante_seleccionado,ventana.objetivo_seleccionado,partida.mapa)
 
     # Si el objetivo no estaba al alcance, muestra un mensaje
     if not ataque_exitoso:
@@ -371,12 +395,18 @@ def atacar_interfaz(ventana, partida):
     # Calcula cuánto daño se realizó
     dano_realizado = vida_antes - vida_despues
 
+    # Prepara el texto de la habilidad si se activó alguna
+    if habilidad_usada is not None:
+        texto_habilidad = f"Habilidad activada: {habilidad_usada}\n"
+    else:
+        texto_habilidad = ""
+   
     # Si el objetivo fue destruido
     if ventana.objetivo_seleccionado.esta_destruida():
-        messagebox.showinfo( "Objetivo destruido", f"El ataque realizó {dano_realizado} de daño y el objetivo fue destruido.")
+        messagebox.showinfo("Objetivo destruido",f"{texto_habilidad}El ataque realizó {dano_realizado} de daño y el objetivo fue destruido.")
     else:
-        messagebox.showinfo("Ataque realizado",f"Daño realizado: {dano_realizado}\nVida restante: {vida_despues}")
-
+        messagebox.showinfo("Ataque realizado", f"{texto_habilidad}Daño realizado: {dano_realizado}\nVida restante: {vida_despues}")
+        
     # Actualiza el tablero y la información visual
     revisar_fin_de_ronda(ventana, partida)
 
@@ -392,6 +422,61 @@ def combate_automatico(partida):
                 atacar(torre, unidad, partida.mapa)
                 break   # cada torre ataca a una sola unidad por turno
             
+def activar_habilidad_interfaz(ventana, partida):
+    """Activa la habilidad especial de una unidad seleccionada.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+
+    # Verifica que haya un objeto seleccionado
+    if ventana.objeto_seleccionado is None:
+        messagebox.showwarning(
+            "Sin objeto",
+            "Primero selecciona una unidad."
+        )
+        return
+
+    # Si el objeto seleccionado es un tanque, intenta activar escudo temporal
+    if isinstance(ventana.objeto_seleccionado, Tanque):
+        habilidad_activada = escudo_temporal(ventana.objeto_seleccionado)
+
+        if habilidad_activada:
+            messagebox.showinfo(
+                "Habilidad activada",
+                "El tanque activó Escudo temporal."
+            )
+        else:
+            messagebox.showinfo(
+                "Habilidad no disponible",
+                "El escudo temporal todavía no está listo."
+            )
+
+    # Si el objeto seleccionado es una unidad rápida, intenta activar aumento de velocidad
+    elif isinstance(ventana.objeto_seleccionado, UnidadRapida):
+        habilidad_activada = aumento_velocidad(ventana.objeto_seleccionado)
+
+        if habilidad_activada:
+            messagebox.showinfo(
+                "Habilidad activada",
+                "La unidad rápida activó Aumento de velocidad."
+            )
+        else:
+            messagebox.showinfo(
+                "Habilidad no disponible",
+                "El aumento de velocidad todavía no está listo."
+            )
+
+    # Si selecciona otro objeto, no tiene esta habilidad
+    else:
+        messagebox.showwarning(
+            "Habilidad no válida",
+            "Este objeto no tiene una habilidad activable desde este botón."
+        )
+        return
+
+    # Actualiza la interfaz
+    mostrar_tablero(ventana, partida)
+
 #____________________
 
 def mostrar_tablero(ventana, partida):
@@ -501,8 +586,12 @@ def mostrar_tablero(ventana, partida):
         boton_atacar = tk.Button(frame_panel,text="Atacar",width=20,command=lambda: atacar_interfaz(ventana, partida))
         boton_atacar.grid(row=11, column=0, columnspan=2, pady=5)
         
+        # boton para activar habilidad
+        boton_habilidad = tk.Button(frame_panel,text="Activar habilidad",width=20,command=lambda: activar_habilidad_interfaz(ventana, partida))
+
+        boton_habilidad.grid(row=12, column=0, columnspan=2, pady=5)
         # ----- botón terminar turno -----
-        tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=12, column=0, columnspan=2, pady=15)
+        tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=13, column=0, columnspan=2, pady=15)
 
         tablero_iniciado = True
 
