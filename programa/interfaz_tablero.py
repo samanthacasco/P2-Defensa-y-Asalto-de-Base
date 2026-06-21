@@ -180,7 +180,7 @@ def seleccionar_casilla_y_objeto(ventana, fila, columna, objeto):
     Recibe la ventana, la fila, la columna y el objeto de la casilla.
     No devuelve nada.
     """
-
+    
     # Guarda la fila seleccionada
     ventana.fila_seleccionada = fila
 
@@ -193,23 +193,29 @@ def seleccionar_casilla_y_objeto(ventana, fila, columna, objeto):
 
     print(f"Casilla seleccionada: ({fila}, {columna})")
 
-
+def terminar_turno_interfaz(ventana, partida):
+    """Termina el turno actual y pasa al siguiente jugador.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+    partida.cambiar_turno()      
+    mostrar_tablero(ventana, partida)  
+    
 def mostrar_tablero(ventana, partida):
     global tablero_iniciado
     limpiar_ventana(ventana)
     
     tamano = 40
 
-    # centrar la ventana solo la primera vez (evita el parpadeo al mover)
     if not tablero_iniciado:
         ancho = partida.mapa.columnas * tamano + 450
         alto = partida.mapa.filas * tamano + 120
         centrar_ventana(ventana, ancho, alto)
         tablero_iniciado = True
     
-    ventana.imagenes = [] 
-    ventana.imagen_vacia = crear_imagen_vacia(tamano) 
-  
+    ventana.imagenes = []
+    ventana.imagen_vacia = crear_imagen_vacia(tamano)
+    
     # mostrar dinero del defensor
     label_defensor = tk.Label(ventana, text=f"Dinero defensor: {partida.dinero_defensor}")
     label_defensor.grid(row=0, column=22, padx=15)
@@ -262,6 +268,10 @@ def mostrar_tablero(ventana, partida):
     boton_comprar_unidad_rapida = tk.Button(ventana,text="Comprar Unidad Rápida",command=lambda: comprar_unidad_rapida_interfaz(ventana, partida))
     boton_comprar_unidad_rapida.grid(row=13, column=22, padx=15, pady=5)
 
+    
+    boton_terminar_turno = tk.Button(ventana, text="Terminar turno", command=lambda: terminar_turno_interfaz(ventana, partida))
+    boton_terminar_turno.grid(row=14, column=22, padx=15, pady=5)
+    
     for fila in range(partida.mapa.filas):
         for columna in range(partida.mapa.columnas):
             contenido = partida.mapa.matriz[fila][columna]
@@ -275,7 +285,6 @@ def mostrar_tablero(ventana, partida):
 
             boton = tk.Button(ventana, image=imagen, width=tamano, height=tamano, command=lambda f=fila, c=columna, o=contenido: seleccionar_casilla_y_objeto(ventana, f, c, o)) 
             boton.grid(row=fila, column=columna)
-
 
 def mostrar_ganador(ventana, partida):
     """Muestra la pantalla de fin de partida con el ganador.
