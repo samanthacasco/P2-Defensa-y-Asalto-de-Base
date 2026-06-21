@@ -31,9 +31,7 @@ class Partida:
             self.jugador_actual = "atacante"
         else:
             self.jugador_actual = "defensor"
-
-        # agrega recursos a ambos jugadores
-        agregar_recursos(self)
+            agregar_recursos(self)
     
     def obtener_jugador_actual(self):
         """Devuelve el jugador al que le corresponde jugar"""
