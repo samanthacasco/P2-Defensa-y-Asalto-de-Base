@@ -2,7 +2,8 @@ import tkinter as tk
 from utilidades import centrar_ventana, limpiar_ventana, cargar_imagen, crear_imagen_vacia
 from modelo import (Base, Muro, Torre, Unidad, TorreBasica, TorrePesada, TorreMagica,
                     Soldado, Tanque, UnidadRapida)
-from economia import comprar_unidad
+from economia import comprar_unidad, comprar_torre, comprar_muro
+
 
 def obtener_imagen(contenido, partida):
     """Devuelve la ruta de imagen correcta para un objeto según su tipo y la facción de su dueño.
@@ -99,6 +100,65 @@ def comprar_soldado_interfaz(ventana, partida):
     else:
          print("No se pudo comprar")
 
+def comprar_tanque_interfaz(ventana, partida):
+    """Compra un tanque y lo coloca en la casilla seleccionada.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+
+    # Verifica que el jugador haya seleccionado una casilla
+    if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
+        print("Primero selecciona una casilla")
+        return
+
+    # Crea un tanque
+    tanque = Tanque()
+
+    # Intenta comprarlo y colocarlo en la casilla seleccionada
+    compra_exitosa = comprar_unidad(
+        partida,
+        tanque,
+        ventana.fila_seleccionada,
+        ventana.columna_seleccionada,
+        "atacante"
+    )
+
+    # Si se pudo comprar, redibuja el tablero
+    if compra_exitosa:
+        mostrar_tablero(ventana, partida)
+    else:
+        print("No se pudo comprar el tanque")
+
+def comprar_unidad_rapida_interfaz(ventana, partida):
+    """Compra una unidad rápida y la coloca en la casilla seleccionada.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+
+    # Verifica que el jugador haya seleccionado una casilla
+    if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
+        print("Primero selecciona una casilla")
+        return
+
+    # Crea una unidad rápida
+    unidad_rapida = UnidadRapida()
+
+    # Intenta comprarla y colocarla en la casilla seleccionada
+    compra_exitosa = comprar_unidad(
+        partida,
+        unidad_rapida,
+        ventana.fila_seleccionada,
+        ventana.columna_seleccionada,
+        "atacante"
+    )
+
+    # Si se pudo comprar, redibuja el tablero
+    if compra_exitosa:
+        mostrar_tablero(ventana, partida)
+    else:
+        print("No se pudo comprar la unidad rápida")
+
+
 def seleccionar_casilla(ventana, fila, columna):
     """Guarda la posición de una casilla seleccionada.
 
@@ -189,6 +249,14 @@ def mostrar_tablero(ventana, partida):
     boton_comprar_soldado = tk.Button(ventana, text="Comprar Soldado", command=lambda: comprar_soldado_interfaz(ventana, partida))
     boton_comprar_soldado.grid(row=11, column=22, padx=15, pady=5)
 
+    # boton para comprar tanque
+    boton_comprar_tanque = tk.Button(ventana,text="Comprar Tanque",command=lambda: comprar_tanque_interfaz(ventana, partida))
+    boton_comprar_tanque.grid(row=12, column=22, padx=15, pady=5)
+
+    # boton para comprar unidad rápida
+    boton_comprar_unidad_rapida = tk.Button(ventana,text="Comprar Unidad Rápida",command=lambda: comprar_unidad_rapida_interfaz(ventana, partida))
+    boton_comprar_unidad_rapida.grid(row=13, column=22, padx=15, pady=5)
+
     for fila in range(partida.mapa.filas):
         for columna in range(partida.mapa.columnas):
             contenido = partida.mapa.matriz[fila][columna]
@@ -202,24 +270,4 @@ def mostrar_tablero(ventana, partida):
 
             boton = tk.Button(ventana, image=imagen, width=tamano, height=tamano, command=lambda f=fila, c=columna, o=contenido: seleccionar_casilla_y_objeto(ventana, f, c, o)) 
             boton.grid(row=fila, column=columna)
-            
-def mostrar_ganador(ventana, partida):
-    """Muestra la pantalla de fin de partida con el ganador.
-    Actualiza las victorias del ganador y muestra quién ganó.
-    Recibe la ventana y la partida.
-    No devuelve nada.
-    """
-    limpiar_ventana(ventana)
 
-    partida.actualizar_victorias()
-
-    ganador = partida.obtener_ganador()
-
-    titulo = tk.Label(ventana, text="FIN DE LA PARTIDA", font=("Arial", 24))
-    titulo.pack(pady=20)
-
-    mensaje = tk.Label(ventana, text=f"¡Ganó el {ganador}!", font=("Arial", 18))
-    mensaje.pack(pady=10)
-
-    boton_salir = tk.Button(ventana, text="Salir", command=ventana.destroy)
-    boton_salir.pack(pady=20)
