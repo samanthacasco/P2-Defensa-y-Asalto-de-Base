@@ -1,10 +1,11 @@
 import tkinter as tk
+from tkinter import messagebox
 from utilidades import centrar_ventana, limpiar_ventana, cargar_imagen, crear_imagen_vacia
 from modelo import (Base, Muro, Torre, Unidad, TorreBasica, TorrePesada, TorreMagica,
                     Soldado, Tanque, UnidadRapida)
 from economia import comprar_unidad, comprar_torre, comprar_muro
 
-tablero_iniciado = False  
+tablero_iniciado= False
 
 def obtener_imagen(contenido, partida):
     """Devuelve la ruta de imagen correcta para un objeto según su tipo y la facción de su dueño.
@@ -86,7 +87,7 @@ def comprar_soldado_interfaz(ventana, partida):
     """
     # Verifica que el jugador haya seleccionado una casilla
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
-        print("Primero selecciona una casilla")
+        messagebox.showwarning("Casilla no seleccionada","Primero selecciona una casilla del tablero.")
         return
 
     # Crea un soldado
@@ -99,7 +100,7 @@ def comprar_soldado_interfaz(ventana, partida):
     if compra_exitosa:
         mostrar_tablero(ventana, partida)
     else:
-         print("No se pudo comprar")
+        messagebox.showerror("Compra fallida","No hay dinero suficiente o la casilla está ocupada.")
 
 def comprar_tanque_interfaz(ventana, partida):
     """Compra un tanque y lo coloca en la casilla seleccionada.
@@ -109,26 +110,20 @@ def comprar_tanque_interfaz(ventana, partida):
 
     # Verifica que el jugador haya seleccionado una casilla
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
-        print("Primero selecciona una casilla")
+        messagebox.showwarning("Casilla no seleccionada","Primero selecciona una casilla del tablero.")
         return
 
     # Crea un tanque
     tanque = Tanque()
 
     # Intenta comprarlo y colocarlo en la casilla seleccionada
-    compra_exitosa = comprar_unidad(
-        partida,
-        tanque,
-        ventana.fila_seleccionada,
-        ventana.columna_seleccionada,
-        "atacante"
-    )
+    compra_exitosa = comprar_unidad(partida,tanque,ventana.fila_seleccionada,ventana.columna_seleccionada,"atacante")
 
     # Si se pudo comprar, redibuja el tablero
     if compra_exitosa:
         mostrar_tablero(ventana, partida)
     else:
-        print("No se pudo comprar el tanque")
+        messagebox.showerror("Compra fallida","No hay dinero suficiente o la casilla está ocupada.")
 
 def comprar_unidad_rapida_interfaz(ventana, partida):
     """Compra una unidad rápida y la coloca en la casilla seleccionada.
@@ -138,28 +133,115 @@ def comprar_unidad_rapida_interfaz(ventana, partida):
 
     # Verifica que el jugador haya seleccionado una casilla
     if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
-        print("Primero selecciona una casilla")
+        messagebox.showwarning("Casilla no seleccionada","Primero selecciona una casilla del tablero.")
         return
 
     # Crea una unidad rápida
     unidad_rapida = UnidadRapida()
 
     # Intenta comprarla y colocarla en la casilla seleccionada
-    compra_exitosa = comprar_unidad(
-        partida,
-        unidad_rapida,
-        ventana.fila_seleccionada,
-        ventana.columna_seleccionada,
-        "atacante"
-    )
+    compra_exitosa = comprar_unidad(partida,unidad_rapida,ventana.fila_seleccionada,ventana.columna_seleccionada,"atacante")
 
     # Si se pudo comprar, redibuja el tablero
     if compra_exitosa:
         mostrar_tablero(ventana, partida)
     else:
-        print("No se pudo comprar la unidad rápida")
+        messagebox.showerror("Compra fallida","No hay dinero suficiente o la casilla está ocupada.")
 
+#----------------
+def comprar_muro_interfaz(ventana, partida):
+    """Compra un muro y lo coloca en la casilla seleccionada.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
 
+    # Verifica que el jugador haya seleccionado una casilla
+    if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
+        messagebox.showwarning("Casilla no seleccionada","Primero selecciona una casilla del tablero.")
+        return
+
+    # Crea un muro
+    muro = Muro()
+
+    # Intenta comprarlo y colocarlo en la casilla seleccionada
+    compra_exitosa = comprar_muro(partida,muro,ventana.fila_seleccionada,ventana.columna_seleccionada,"defensor")
+
+    # Si se pudo comprar, redibuja el tablero
+    if compra_exitosa:
+        mostrar_tablero(ventana, partida)
+    else:
+        messagebox.showerror("Compra fallida","No hay dinero suficiente o la casilla está ocupada.")
+
+def comprar_torre_basica_interfaz(ventana, partida):
+    """Compra una torre básica y la coloca en la casilla seleccionada.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+
+    # Verifica que el jugador haya seleccionado una casilla
+    if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
+        messagebox.showwarning("Casilla no seleccionada","Primero selecciona una casilla del tablero.")
+        return
+
+    # Crea una torre básica
+    torre = TorreBasica()
+
+    # Intenta comprarla y colocarla en la casilla seleccionada
+    compra_exitosa = comprar_torre(partida,torre,ventana.fila_seleccionada,ventana.columna_seleccionada,"defensor")
+
+    # Si se pudo comprar, redibuja el tablero
+    if compra_exitosa:
+        mostrar_tablero(ventana, partida)
+    else:
+        messagebox.showerror("Compra fallida","No hay dinero suficiente o la casilla está ocupada.")
+
+def comprar_torre_pesada_interfaz(ventana, partida):
+    """Compra una torre pesada y la coloca en la casilla seleccionada.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+
+    # Verifica que el jugador haya seleccionado una casilla
+    if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
+        messagebox.showwarning("Casilla no seleccionada","Primero selecciona una casilla del tablero.")
+        return
+
+    # Crea una torre pesada
+    torre = TorrePesada()
+
+    # Intenta comprarla y colocarla en la casilla seleccionada
+    compra_exitosa = comprar_torre(partida,torre,ventana.fila_seleccionada,ventana.columna_seleccionada,"defensor")
+
+    # Si se pudo comprar, redibuja el tablero
+    if compra_exitosa:
+        mostrar_tablero(ventana, partida)
+    else:
+        messagebox.showerror("Compra fallida","No hay dinero suficiente o la casilla está ocupada.")
+
+def comprar_torre_magica_interfaz(ventana, partida):
+    """Compra una torre mágica y la coloca en la casilla seleccionada.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+
+    # Verifica que el jugador haya seleccionado una casilla
+    if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
+        messagebox.showwarning("Casilla no seleccionada","Primero selecciona una casilla del tablero.")
+        return
+
+    # Crea una torre mágica
+    torre = TorreMagica()
+
+    # Intenta comprarla y colocarla en la casilla seleccionada
+    compra_exitosa = comprar_torre(partida,torre,ventana.fila_seleccionada,ventana.columna_seleccionada,"defensor")
+
+    # Si se pudo comprar, redibuja el tablero
+    if compra_exitosa:
+        mostrar_tablero(ventana, partida)
+    else:
+        messagebox.showerror("Compra fallida","No hay dinero suficiente o la casilla está ocupada.")
+
+#--------------
 def seleccionar_casilla(ventana, fila, columna):
     """Guarda la posición de una casilla seleccionada.
 
@@ -173,14 +255,12 @@ def seleccionar_casilla(ventana, fila, columna):
     # Guarda la columna seleccionada
     ventana.columna_seleccionada = columna
 
-    print(f"Casilla seleccionada: ({fila}, {columna})")
-
 def seleccionar_casilla_y_objeto(ventana, fila, columna, objeto):
     """Guarda la casilla seleccionada y el objeto que está en esa casilla.
     Recibe la ventana, la fila, la columna y el objeto de la casilla.
     No devuelve nada.
     """
-    
+
     # Guarda la fila seleccionada
     ventana.fila_seleccionada = fila
 
@@ -191,16 +271,14 @@ def seleccionar_casilla_y_objeto(ventana, fila, columna, objeto):
     # Si la casilla está vacía, objeto será None
     ventana.objeto_seleccionado = objeto
 
-    print(f"Casilla seleccionada: ({fila}, {columna})")
-
 def terminar_turno_interfaz(ventana, partida):
     """Termina el turno actual y pasa al siguiente jugador.
     Recibe la ventana y la partida.
     No devuelve nada.
     """
     partida.cambiar_turno()      
-    mostrar_tablero(ventana, partida)  
-    
+    mostrar_tablero(ventana, partida) 
+
 def mostrar_tablero(ventana, partida):
     global tablero_iniciado
     limpiar_ventana(ventana)
@@ -211,66 +289,85 @@ def mostrar_tablero(ventana, partida):
         ancho = partida.mapa.columnas * tamano + 450
         alto = partida.mapa.filas * tamano + 120
         centrar_ventana(ventana, ancho, alto)
-        tablero_iniciado = True
     
     ventana.imagenes = []
-    ventana.imagen_vacia = crear_imagen_vacia(tamano)
+    ventana.imagen_vacia = crear_imagen_vacia(tamano) 
     
-    # mostrar dinero del defensor
-    label_defensor = tk.Label(ventana, text=f"Dinero defensor: {partida.dinero_defensor}")
-    label_defensor.grid(row=0, column=22, padx=15)
-
     # mostrar dinero del atacante
     label_atacante = tk.Label(ventana, text=f"Dinero atacante: {partida.dinero_atacante}")
-    label_atacante.grid(row=1, column=22, padx=15)
+    label_atacante.grid(row=0, column=22, padx=15)
+
+    # mostrar dinero del defensor
+    label_defensor = tk.Label(ventana, text=f"Dinero defensor: {partida.dinero_defensor}")
+    label_defensor.grid(row=0, column=23, padx=15)
 
     # mostrar turno actual
     label_turno = tk.Label(ventana, text=f"Turno: {partida.turno}")
-    label_turno.grid(row=2, column=22, padx=15)
+    label_turno.grid(row=1, column=22, padx=15)
 
     # mostrar jugador actual
     label_jugador = tk.Label(ventana, text=f"Jugador actual: {partida.jugador_actual}")
-    label_jugador.grid(row=3, column=22, padx=15)
+    label_jugador.grid(row=1, column=23, padx=15)
 
     # mostrar marcador de rondas, defensor
     label_rondas_defensor = tk.Label(ventana, text=f"Rondas defensor: {partida.rondas_defensor}")
-    label_rondas_defensor.grid(row=4, column=22, padx=15)
+    label_rondas_defensor.grid(row=2, column=22, padx=15)
 
     # mostrar marcador de rondas, atacante
     label_rondas_atacante = tk.Label(ventana, text=f"Rondas atacante: {partida.rondas_atacante}")
-    label_rondas_atacante.grid(row=5, column=22, padx=15)
+    label_rondas_atacante.grid(row=2, column=23, padx=15)
 
-    # botón para mover hacia arriba
-    boton_arriba = tk.Button(ventana, text="↑", command=lambda: mover_arriba_interfaz(ventana, partida))
-    boton_arriba.grid(row=7, column=22)
-
-    # botón para mover hacia la izquierda
-    boton_izquierda = tk.Button(ventana,text="←",command=lambda: mover_izquierda_interfaz(ventana, partida))
-    boton_izquierda.grid(row=8, column=21)
-
-    # botón para mover hacia la derecha
-    boton_derecha = tk.Button(ventana, text="→", command=lambda: mover_derecha_interfaz(ventana, partida))
-    boton_derecha.grid(row=8, column=24)
-
-    # btón para mover hacia abajo
-    boton_abajo = tk.Button(ventana, text="↓", command=lambda: mover_abajo_interfaz(ventana, partida))
-    boton_abajo.grid(row=9, column=22)
-
+    #_____________________________
     # boton para comprar soldado 
     boton_comprar_soldado = tk.Button(ventana, text="Comprar Soldado", command=lambda: comprar_soldado_interfaz(ventana, partida))
-    boton_comprar_soldado.grid(row=11, column=22, padx=15, pady=5)
+    boton_comprar_soldado.grid(row=3, column=22, padx=15, pady=5)
 
     # boton para comprar tanque
     boton_comprar_tanque = tk.Button(ventana,text="Comprar Tanque",command=lambda: comprar_tanque_interfaz(ventana, partida))
-    boton_comprar_tanque.grid(row=12, column=22, padx=15, pady=5)
+    boton_comprar_tanque.grid(row=4, column=22, padx=15, pady=5)
 
     # boton para comprar unidad rápida
     boton_comprar_unidad_rapida = tk.Button(ventana,text="Comprar Unidad Rápida",command=lambda: comprar_unidad_rapida_interfaz(ventana, partida))
-    boton_comprar_unidad_rapida.grid(row=13, column=22, padx=15, pady=5)
-
+    boton_comprar_unidad_rapida.grid(row=5, column=22, padx=15, pady=5)
     
+    #___________________________
+    # boton para comprar muro
+    boton_comprar_muro = tk.Button(ventana,text="Comprar Muro",command=lambda: comprar_muro_interfaz(ventana, partida))
+    boton_comprar_muro.grid(row=3, column=23, padx=15, pady=5)
+
+    # boton para comprar torre básica
+    boton_comprar_torre_basica = tk.Button(ventana,text="Comprar Torre Básica",command=lambda: comprar_torre_basica_interfaz(ventana, partida))
+    boton_comprar_torre_basica.grid(row=4, column=23, padx=15, pady=5)
+
+    # boton para comprar torre pesada
+    boton_comprar_torre_pesada = tk.Button(ventana,text="Comprar Torre Pesada",command=lambda: comprar_torre_pesada_interfaz(ventana, partida))
+    boton_comprar_torre_pesada.grid(row=5, column=23, padx=15, pady=5)
+    
+    # botón para comprar torre magica
+    boton_comprar_torre_magica = tk.Button(ventana,text="Comprar Torre Mágica",command=lambda: comprar_torre_magica_interfaz(ventana, partida))
+    boton_comprar_torre_magica.grid(row=6, column=23, padx=15, pady=5)
+    #___________________________
+    
+    # botón para mover hacia arriba
+    boton_arriba = tk.Button(ventana, text="↑", command=lambda: mover_arriba_interfaz(ventana, partida))
+    boton_arriba.grid(row=10, column=23)
+
+    # botón para mover hacia la izquierda
+    boton_izquierda = tk.Button(ventana,text="←",command=lambda: mover_izquierda_interfaz(ventana, partida))
+    boton_izquierda.grid(row=11, column=22)
+
+    # botón para mover hacia la derecha
+    boton_derecha = tk.Button(ventana, text="→", command=lambda: mover_derecha_interfaz(ventana, partida))
+    boton_derecha.grid(row=11, column=24)
+
+    # btón para mover hacia abajo
+    boton_abajo = tk.Button(ventana, text="↓", command=lambda: mover_abajo_interfaz(ventana, partida))
+    boton_abajo.grid(row=12, column=23)
+    #__________________________
+    # boton de terminar turno
     boton_terminar_turno = tk.Button(ventana, text="Terminar turno", command=lambda: terminar_turno_interfaz(ventana, partida))
     boton_terminar_turno.grid(row=14, column=22, padx=15, pady=5)
+
     
     for fila in range(partida.mapa.filas):
         for columna in range(partida.mapa.columnas):
@@ -319,3 +416,4 @@ def revisar_fin_de_ronda(ventana, partida):
         mostrar_ganador(ventana, partida)
     else:
         mostrar_tablero(ventana, partida)
+
