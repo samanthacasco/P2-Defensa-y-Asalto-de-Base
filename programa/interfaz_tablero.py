@@ -4,6 +4,7 @@ from modelo import (Base, Muro, Torre, Unidad, TorreBasica, TorrePesada, TorreMa
                     Soldado, Tanque, UnidadRapida)
 from economia import comprar_unidad, comprar_torre, comprar_muro
 
+tablero_iniciado = False  
 
 def obtener_imagen(contenido, partida):
     """Devuelve la ruta de imagen correcta para un objeto según su tipo y la facción de su dueño.
@@ -194,16 +195,19 @@ def seleccionar_casilla_y_objeto(ventana, fila, columna, objeto):
 
 
 def mostrar_tablero(ventana, partida):
+    global tablero_iniciado
     limpiar_ventana(ventana)
     
     tamano = 40
-    ancho = partida.mapa.columnas * tamano + 450
-    alto = partida.mapa.filas * tamano + 120
-    centrar_ventana(ventana, ancho, alto)
-    
-    ventana.imagenes = []
 
-    ventana.imagen_vacia = crear_imagen_vacia(tamano) 
+    # centrar la ventana solo la primera vez (evita el parpadeo al mover)
+    if not tablero_iniciado:
+        ancho = partida.mapa.columnas * tamano + 450
+        alto = partida.mapa.filas * tamano + 120
+        centrar_ventana(ventana, ancho, alto)
+        tablero_iniciado = True
+    
+    ventana.imagenes = [] 
     
     # mostrar dinero del defensor
     label_defensor = tk.Label(ventana, text=f"Dinero defensor: {partida.dinero_defensor}")
@@ -271,3 +275,24 @@ def mostrar_tablero(ventana, partida):
             boton = tk.Button(ventana, image=imagen, width=tamano, height=tamano, command=lambda f=fila, c=columna, o=contenido: seleccionar_casilla_y_objeto(ventana, f, c, o)) 
             boton.grid(row=fila, column=columna)
 
+
+def mostrar_ganador(ventana, partida):
+    """Muestra la pantalla de fin de partida con el ganador.
+    Actualiza las victorias del ganador y muestra quién ganó.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+    limpiar_ventana(ventana)
+
+    partida.actualizar_victorias()
+
+    ganador = partida.obtener_ganador()
+
+    titulo = tk.Label(ventana, text="FIN DE LA PARTIDA", font=("Arial", 24))
+    titulo.pack(pady=20)
+
+    mensaje = tk.Label(ventana, text=f"¡Ganó el {ganador}!", font=("Arial", 18))
+    mensaje.pack(pady=10)
+
+    boton_salir = tk.Button(ventana, text="Salir", command=ventana.destroy)
+    boton_salir.pack(pady=20)
