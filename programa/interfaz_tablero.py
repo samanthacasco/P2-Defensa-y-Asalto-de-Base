@@ -5,6 +5,8 @@ from modelo import (Base, Muro, Torre, Unidad, TorreBasica, TorrePesada, TorreMa
                     Soldado, Tanque, UnidadRapida)
 from economia import comprar_unidad, comprar_torre, comprar_muro
 from combate import atacar, esta_al_alcance
+from habilidades import ataque_doble, disparo_doble, danio_aumentado, congelar
+
 
 tablero_iniciado = False
 
@@ -310,6 +312,32 @@ def seleccionar_objetivo(ventana):
     messagebox.showinfo("Objetivo seleccionado","El objetivo fue seleccionado correctamente.")
 #____________________
 
+def ejecutar_ataque_con_habilidad(atacante, objetivo, mapa):
+    """Ejecuta el ataque correspondiente según el tipo de atacante.
+    Recibe el atacante, el objetivo y el mapa.
+    Devuelve True si el ataque se realizó o False en caso contrario.
+    """
+
+    # Si el atacante es un soldado, usa su habilidad de ataque doble
+    if isinstance(atacante, Soldado):
+        return ataque_doble(atacante, objetivo, mapa)
+
+    # Si el atacante es una torre básica, usa disparo doble
+    elif isinstance(atacante, TorreBasica):
+        return disparo_doble(atacante, objetivo, mapa)
+
+    # Si el atacante es una torre pesada, usa daño aumentado
+    elif isinstance(atacante, TorrePesada):
+        return danio_aumentado(atacante, objetivo, mapa)
+
+    # Si el atacante es una torre mágica, usa congelar
+    elif isinstance(atacante, TorreMagica):
+        return congelar(atacante, objetivo, mapa)
+
+    # Si no tiene una habilidad de ataque especial, ataca normal
+    return atacar(atacante, objetivo, mapa)
+
+
 def atacar_interfaz(ventana, partida):
     """Realiza un ataque usando el atacante y el objetivo seleccionados.
     Recibe la ventana y la partida.
@@ -330,7 +358,7 @@ def atacar_interfaz(ventana, partida):
     vida_antes = ventana.objetivo_seleccionado.vida
 
     # Intenta realizar el ataque usando la función de combate.py
-    ataque_exitoso = atacar( ventana.atacante_seleccionado, ventana.objetivo_seleccionado,  partida.mapa)
+    ataque_exitoso = ejecutar_ataque_con_habilidad(ventana.atacante_seleccionado,ventana.objetivo_seleccionado,partida.mapa)
 
     # Si el objetivo no estaba al alcance, muestra un mensaje
     if not ataque_exitoso:
@@ -573,3 +601,4 @@ def revisar_fin_de_ronda(ventana, partida):
         mostrar_ganador(ventana, partida)
     else:
         mostrar_tablero(ventana, partida)
+
