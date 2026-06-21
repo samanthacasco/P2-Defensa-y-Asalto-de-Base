@@ -1,6 +1,5 @@
 from mapa import Mapa
 from economia import agregar_recursos
-from jugador import cargar_jugadores, guardar_jugadores
 
 class Partida:
     def __init__(self, jugador_defensor, jugador_atacante):
@@ -31,7 +30,9 @@ class Partida:
             self.jugador_actual = "atacante"
         else:
             self.jugador_actual = "defensor"
-            agregar_recursos(self)
+
+        # agrega recursos a ambos jugadores
+        agregar_recursos(self)
     
     def obtener_jugador_actual(self):
         """Devuelve el jugador al que le corresponde jugar"""
@@ -74,6 +75,23 @@ class Partida:
         elif self.gano_atacante():
             self.rondas_atacante += 1
 
+    def ronda_termino(self):
+        """Indica si la ronda actual terminó porque alguien la ganó.
+        Devuelve True si el defensor o el atacante ganó la ronda, False en caso contrario.
+        """
+        return self.gano_defensor() or self.gano_atacante()
+
+    def reiniciar_ronda(self):
+        """Reinicia el mapa y los valores para empezar una ronda nueva.
+        Crea un mapa nuevo (base nueva, sin torres ni unidades), reinicia el dinero inicial
+        y devuelve el turno al defensor. No toca el marcador de rondas ganadas.
+        No recibe parámetros ni devuelve nada.
+        """
+        self.mapa = Mapa()                  
+        self.dinero_defensor = 500
+        self.dinero_atacante = 500
+        self.jugador_actual = "defensor"    
+
     def obtener_ganador(self):
         """Devuelve el ganador de la partida.
         El primer jugador en ganar 3 rondas gana la partida.
@@ -85,26 +103,5 @@ class Partida:
 
         if self.rondas_atacante >= 3:
             return "atacante"
+
         return None
-    
-    def actualizar_victorias(self):
-        """Suma una victoria al jugador ganador de la partida y la guarda en el archivo.
-        Determina el ganador, lo busca en la lista de jugadores guardados,
-        le suma la victoria según su rol y guarda la lista actualizada.
-        """
-        ganador = self.obtener_ganador()
-        if ganador is None:
-            return
-         
-        if ganador == "defensor":
-            usuario_ganador = self.jugador_defensor.usuario
-        else:
-            usuario_ganador = self.jugador_atacante.usuario
-        
-        lista_jugadores = cargar_jugadores()
-        for jugador in lista_jugadores:
-            if jugador.usuario == usuario_ganador:
-                jugador.agregar_victoria(ganador)
-        
-        guardar_jugadores(lista_jugadores)  
-        
