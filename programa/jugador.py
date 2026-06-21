@@ -68,6 +68,8 @@ def cargar_jugadores():
 
 def registrar(usuario, clave):
     """Registra un jugador nuevo si el usuario no está repetido.
+    El usuario se guarda en mayúsculas, de modo que "Samy" y "samy" se
+    consideran el mismo usuario y siempre se muestra en mayúsculas.
     Recibe el usuario y la clave del nuevo jugador.
     Devuelve False si ya existe un jugador con ese usuario,
     o True si el registro se realizó con éxito.
@@ -75,22 +77,24 @@ def registrar(usuario, clave):
     
     lista_jugadores = cargar_jugadores()
     for jugador in lista_jugadores:
-        if jugador.usuario == usuario:
+        if jugador.usuario == usuario.upper():
             return False
-    jugador = Jugador(usuario, clave)
+    jugador = Jugador(usuario.upper(), clave)
     lista_jugadores.append(jugador)
     guardar_jugadores(lista_jugadores)
     return True
 
 def login(usuario, clave):
     """Busca un jugador cuyo usuario y clave coincidan.
+    El usuario se compara en mayúsculas (como se guarda), pero la clave
+    se compara de forma exacta (distingue mayúsculas, por seguridad).
     Devuelve el objeto Jugador si la combinación es correcta,
     o None si el usuario no existe o la clave es incorrecta.
     """
     
     lista_jugadores = cargar_jugadores()
     for jugador in lista_jugadores:
-        if jugador.usuario == usuario and jugador.clave == clave:
+        if jugador.usuario == usuario.upper() and jugador.clave == clave:
             return jugador
     return None
 
