@@ -287,28 +287,39 @@ def atacar_interfaz(ventana, partida):
 
     # Verifica que haya un atacante seleccionado
     if ventana.atacante_seleccionado is None:
-        messagebox.showwarning("Sin atacante", "Primero selecciona un atacante.")
+        messagebox.showwarning("Sin atacante","Primero selecciona un atacante.")
         return
 
     # Verifica que haya un objetivo seleccionado
     if ventana.objetivo_seleccionado is None:
-        messagebox.showwarning("Sin objetivo","Primero selecciona un objetivo." )
+        messagebox.showwarning( "Sin objetivo", "Primero selecciona un objetivo.")
         return
 
+    # Guarda la vida del objetivo antes del ataque
+    vida_antes = ventana.objetivo_seleccionado.vida
+
     # Intenta realizar el ataque usando la función de combate.py
-    ataque_exitoso = atacar(ventana.atacante_seleccionado,ventana.objetivo_seleccionado,partida.mapa)
+    ataque_exitoso = atacar( ventana.atacante_seleccionado, ventana.objetivo_seleccionado,  partida.mapa)
 
     # Si el objetivo no estaba al alcance, muestra un mensaje
     if not ataque_exitoso:
-        messagebox.showerror("Ataque fallido","El objetivo no está al alcance o el ataque no se pudo realizar.")
+        messagebox.showerror("Ataque fallido", "El objetivo no está al alcance o el ataque no se pudo realizar." )
         return
 
-    # Si el ataque se realizó correctamente, muestra un mensaje
-    messagebox.showinfo("Ataque realizado","El ataque se realizó correctamente.")
+    # Calcula la vida después del ataque
+    vida_despues = ventana.objetivo_seleccionado.vida
+
+    # Calcula cuánto daño se realizó
+    dano_realizado = vida_antes - vida_despues
+
+    # Si el objetivo fue destruido
+    if ventana.objetivo_seleccionado.esta_destruida():
+        messagebox.showinfo( "Objetivo destruido", f"El ataque realizó {dano_realizado} de daño y el objetivo fue destruido.")
+    else:
+        messagebox.showinfo("Ataque realizado",f"Daño realizado: {dano_realizado}\nVida restante: {vida_despues}")
 
     # Actualiza el tablero y la información visual
     mostrar_tablero(ventana, partida)
-
 #____________________
 
 def mostrar_tablero(ventana, partida):
