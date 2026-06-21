@@ -255,6 +255,26 @@ def terminar_turno_interfaz(ventana, partida):
     partida.cambiar_turno()
     mostrar_tablero(ventana, partida)
 
+def seleccionar_atacante(ventana):
+    """Guarda el objeto seleccionado como atacante"""
+
+    if ventana.objeto_seleccionado is None:
+        messagebox.showwarning( "Sin objeto","Primero selecciona un objeto del tablero.")
+        return
+
+    ventana.atacante_seleccionado = ventana.objeto_seleccionado
+    messagebox.showinfo("Atacante seleccionado","El atacante fue seleccionado correctamente.")
+
+
+def seleccionar_objetivo(ventana):
+    """Guarda el objeto seleccionado como objetivo"""
+
+    if ventana.objeto_seleccionado is None:
+        messagebox.showwarning("Sin objeto","Primero selecciona un objeto del tablero.")
+        return
+
+    ventana.objetivo_seleccionado = ventana.objeto_seleccionado
+    messagebox.showinfo("Objetivo seleccionado","El objetivo fue seleccionado correctamente.")
 
 def mostrar_tablero(ventana, partida):
     """Muestra el tablero. La primera vez crea toda la interfaz con frames separados
@@ -351,8 +371,16 @@ def mostrar_tablero(ventana, partida):
         tk.Button(frame_flechas, text="↓", width=4, command=lambda: mover_abajo_interfaz(ventana, partida)).grid(row=1, column=1)
         tk.Button(frame_flechas, text="→", width=4, command=lambda: mover_derecha_interfaz(ventana, partida)).grid(row=1, column=2)
 
+        # Botón para seleccionar atacante
+        boton_seleccionar_atacante = tk.Button(frame_panel,text="Seleccionar atacante",width=20,command=lambda: seleccionar_atacante(ventana))
+        boton_seleccionar_atacante.grid(row=9, column=0, columnspan=2, pady=5)
+
+        # Botón para seleccionar objetivo
+        boton_seleccionar_objetivo = tk.Button( frame_panel,text="Seleccionar objetivo",width=20, command=lambda: seleccionar_objetivo(ventana))
+        boton_seleccionar_objetivo.grid(row=10, column=0, columnspan=2, pady=5)
+        
         # ----- botón terminar turno -----
-        tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=5, column=0, columnspan=2, pady=15)
+        tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=11, column=0, columnspan=2, pady=15)
 
         tablero_iniciado = True
 
