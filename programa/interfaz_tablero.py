@@ -202,4 +202,24 @@ def mostrar_tablero(ventana, partida):
 
             boton = tk.Button(ventana, image=imagen, width=tamano, height=tamano, command=lambda f=fila, c=columna, o=contenido: seleccionar_casilla_y_objeto(ventana, f, c, o)) 
             boton.grid(row=fila, column=columna)
+            
+def mostrar_ganador(ventana, partida):
+    """Muestra la pantalla de fin de partida con el ganador.
+    Actualiza las victorias del ganador y muestra quién ganó.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+    limpiar_ventana(ventana)
 
+    partida.actualizar_victorias()
+
+    ganador = partida.obtener_ganador()
+
+    titulo = tk.Label(ventana, text="FIN DE LA PARTIDA", font=("Arial", 24))
+    titulo.pack(pady=20)
+
+    mensaje = tk.Label(ventana, text=f"¡Ganó el {ganador}!", font=("Arial", 18))
+    mensaje.pack(pady=10)
+
+    boton_salir = tk.Button(ventana, text="Salir", command=ventana.destroy)
+    boton_salir.pack(pady=20)
