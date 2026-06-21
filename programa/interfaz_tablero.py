@@ -214,11 +214,38 @@ def seleccionar_casilla_y_objeto(ventana, fila, columna, objeto):
     Recibe la ventana, la fila, la columna y el objeto de la casilla.
     No devuelve nada.
     """
+
+    # Guarda la fila seleccionada
     ventana.fila_seleccionada = fila
+
+    # Guarda la columna seleccionada
     ventana.columna_seleccionada = columna
+
+    # Guarda el objeto seleccionado
     # Si la casilla está vacía, objeto será None
     ventana.objeto_seleccionado = objeto
 
+    # Actualiza la información de la casilla seleccionada
+    ventana.label_casilla.config(text=f"Casilla seleccionada: ({fila}, {columna})")
+
+    # Actualiza la información del objeto seleccionado
+    if objeto is None:
+        ventana.label_objeto.config(text="Objeto seleccionado: Ninguno")
+
+    elif isinstance(objeto, Base):
+        ventana.label_objeto.config(text="Objeto seleccionado: Base")
+
+    elif isinstance(objeto, Muro):
+        ventana.label_objeto.config(text="Objeto seleccionado: Muro")
+
+    else:
+        ventana.label_objeto.config(text=f"Objeto seleccionado: {objeto.nombre}")
+
+    if objeto is None:
+        ventana.label_vida.config(text="Vida: -")
+        
+    else:
+        ventana.label_vida.config(text=f"Vida: {objeto.vida}")
 
 def terminar_turno_interfaz(ventana, partida):
     """Termina el turno actual y pasa al siguiente jugador.
@@ -287,6 +314,17 @@ def mostrar_tablero(ventana, partida):
         ventana.label_rondas_atacante = tk.Label(frame_panel, text=f"Rondas atacante: {partida.rondas_atacante}")
         ventana.label_rondas_atacante.grid(row=2, column=1, padx=10, pady=4)
 
+        # ----- información de selección -----
+        ventana.label_casilla = tk.Label(frame_panel,text="Casilla seleccionada: Ninguna")
+        ventana.label_casilla.grid(row=6, column=0, columnspan=2, pady=4)
+
+        ventana.label_objeto = tk.Label(frame_panel,text="Objeto seleccionado: Ninguno")
+        ventana.label_objeto.grid(row=7, column=0, columnspan=2, pady=4)
+
+        # Muestra la vida del objeto seleccionado
+        ventana.label_vida = tk.Label(frame_panel, text="Vida: -")
+        ventana.label_vida.grid(row=8, column=0, columnspan=2, pady=4)
+
         # ----- frame de compras del atacante -----
         frame_atacante = tk.LabelFrame(frame_panel, text="Atacante", padx=10, pady=10)
         frame_atacante.grid(row=3, column=0, padx=10, pady=10, sticky="n")
@@ -353,6 +391,26 @@ def actualizar_info(ventana, partida):
     ventana.label_jugador.config(text=f"Jugador actual: {partida.jugador_actual}")
     ventana.label_rondas_defensor.config(text=f"Rondas defensor: {partida.rondas_defensor}")
     ventana.label_rondas_atacante.config(text=f"Rondas atacante: {partida.rondas_atacante}")
+    
+    # Actualiza la casilla seleccionada
+    if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
+        texto_casilla = "Casilla seleccionada: Ninguna"
+    else:
+        texto_casilla = f"Casilla seleccionada: ({ventana.fila_seleccionada}, {ventana.columna_seleccionada})"
+
+    ventana.label_casilla.config(text=texto_casilla)
+
+    # Actualiza el objeto seleccionado
+    if ventana.objeto_seleccionado is None:
+        texto_objeto = "Objeto seleccionado: Ninguno"
+    elif isinstance(ventana.objeto_seleccionado, Base):
+        texto_objeto = "Objeto seleccionado: Base"
+    elif isinstance(ventana.objeto_seleccionado, Muro):
+        texto_objeto = "Objeto seleccionado: Muro"
+    else:
+        texto_objeto = f"Objeto seleccionado: {ventana.objeto_seleccionado.nombre}"
+
+    ventana.label_objeto.config(text=texto_objeto)
 
 def mostrar_ganador(ventana, partida):
     """Muestra la pantalla de fin de partida con el ganador.
