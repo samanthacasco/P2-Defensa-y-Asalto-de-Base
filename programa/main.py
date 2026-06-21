@@ -6,10 +6,11 @@ from partida import Partida
 from interfaz_facciones import elegir_faccion_defensor
 from interfaz_tablero import mostrar_tablero
 from interfaz_menu import mostrar_menu_principal
-
-# variables globales que comparten todas las pantallas
+import interfaz_tablero
+# Variables globales que comparten todas las pantallas
 ventana = None
 partida = None
+jugador_defensor = None
 
 
 def iniciar_juego():
@@ -31,7 +32,7 @@ def iniciar_juego():
     ventana.objetivo_seleccionado = None
 
     ventana.title("Defensa y Asalto de Base")
-    centrar_ventana(ventana, 400, 300)
+    centrar_ventana(ventana, 400, 320)
     login_defensor()
     ventana.mainloop()
 
@@ -40,92 +41,121 @@ def login_defensor():
     """Pantalla de login del defensor."""
     limpiar_ventana(ventana)
 
-    tk.Label(ventana, text="LOGIN DEFENSOR").pack()
+    tk.Label(ventana, text="LOGIN DEFENSOR", font=("Arial", 12, "bold")).pack(pady=10)
+    
     tk.Label(ventana, text="Usuario:").pack()
     entry_usuario = tk.Entry(ventana)
-    entry_usuario.pack()
+    entry_usuario.pack(pady=5)
+    
     tk.Label(ventana, text="Contraseña:").pack()
     entry_clave = tk.Entry(ventana, show="*")
-    entry_clave.pack()
+    entry_clave.pack(pady=5)
 
     def intentar():
-        resultado = login(entry_usuario.get(), entry_clave.get())
+        usuario = entry_usuario.get().strip()
+        clave = entry_clave.get().strip()
+
+        # Validamos campos vacíos ANTES de llamar al login
+        if usuario == "" or clave == "":
+            messagebox.showerror("Error", "No se pueden usar campos vacíos")
+            return
+
+        resultado = login(usuario, clave)
         if resultado is None:
-            messagebox.showinfo("Error", "Usuario o clave incorrecta")
+            messagebox.showerror("Error", "Usuario o clave incorrecta")
         else:
             global jugador_defensor
             jugador_defensor = resultado
             login_atacante(jugador_defensor)
 
     def intentar_registrar():
-        resultado = registrar(entry_usuario.get(), entry_clave.get())
-        if resultado:
-            messagebox.showinfo("Éxito", "Usuario registrado, ahora puede inicia sesión")
+        usuario = entry_usuario.get().strip()
+        clave = entry_clave.get().strip()
+
+        # Validamos campos vacíos ANTES de registrar
+        if usuario == "" or clave == "":
+            messagebox.showerror("Error", "No se pueden usar campos vacíos")
+            return
+
+        if registrar(usuario, clave):
+            messagebox.showinfo("Éxito", "Usuario registrado, ahora puede iniciar sesión")
         else:
-            messagebox.showinfo("Error", "Ese usuario ya existe")
+            messagebox.showerror("Error", "Ese usuario ya existe")
 
-    tk.Button(ventana, text="Inicia sesión", command=intentar).pack()
-    tk.Button(ventana, text="Registrarse", command=intentar_registrar).pack()
+    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15).pack(pady=5)
+    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15).pack(pady=5)
 
 
-def login_atacante(jugador_defensor):
+def login_atacante(jugador_defensor_logueado):
     """Pantalla de login del atacante. Recibe el jugador defensor ya logueado."""
     limpiar_ventana(ventana)
 
-    tk.Label(ventana, text="LOGIN ATACANTE").pack()
+    tk.Label(ventana, text="LOGIN ATACANTE", font=("Arial", 12, "bold")).pack(pady=10)
+    
     tk.Label(ventana, text="Usuario:").pack()
     entry_usuario = tk.Entry(ventana)
-    entry_usuario.pack()
+    entry_usuario.pack(pady=5)
+    
     tk.Label(ventana, text="Contraseña:").pack()
     entry_clave = tk.Entry(ventana, show="*")
-    entry_clave.pack()
+    entry_clave.pack(pady=5)
 
     def intentar():
-        resultado = login(entry_usuario.get(), entry_clave.get())
+        usuario = entry_usuario.get().strip()
+        clave = entry_clave.get().strip()
+
+        if usuario == "" or clave == "":
+            messagebox.showerror("Error", "No se pueden usar campos vacíos")
+            return
+
+        if usuario == jugador_defensor_logueado.usuario:
+            messagebox.showerror("Error", "Ese jugador ya entró como defensor")
+            return
+
+        resultado = login(usuario, clave)
         if resultado is None:
-            messagebox.showinfo("Error", "Usuario o clave incorrecta")
-        elif resultado.usuario == jugador_defensor.usuario:
-            messagebox.showinfo("Error", "Ese jugador ya entró como defensor")
+            messagebox.showerror("Error", "Usuario o clave incorrecta")
         else:
-            ir_al_menu(jugador_defensor, resultado)
+            ir_al_menu(jugador_defensor_logueado, resultado)
 
     def intentar_registrar():
-        resultado = registrar(entry_usuario.get(), entry_clave.get())
-        if resultado:
-            messagebox.showinfo("Éxito", "Usuario registrado, ahora puede inicia sesión")
+        usuario = entry_usuario.get().strip()
+        clave = entry_clave.get().strip()
+
+        if usuario == "" or clave == "":
+            messagebox.showerror("Error", "No se pueden usar campos vacíos")
+            return
+
+        if registrar(usuario, clave):
+            messagebox.showinfo("Éxito", "Usuario registrado, ahora puede iniciar sesión")
         else:
-            messagebox.showinfo("Error", "Ese usuario ya existe")
+            messagebox.showerror("Error", "Ese usuario ya existe")
 
-    tk.Button(ventana, text="Inicia sesión", command=intentar).pack()
-    tk.Button(ventana, text="Registrarse", command=intentar_registrar).pack()
+    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15).pack(pady=5)
+    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15).pack(pady=5)
 
 
-def ir_al_menu(jugador_defensor, jugador_atacante):
-    """Muestra el menú principal con las opciones de iniciar juego, ranking y salir.
-    Recibe los dos jugadores ya logueados.
-    No devuelve nada.
-    """
-    # función que arranca la partida cuando se elige "Iniciar juego"
+def ir_al_menu(jugador_defensor_obj, jugador_atacante_obj):
+    """Muestra el menú principal con las opciones de iniciar juego, ranking y salir."""
     def arrancar_partida():
-        crear_partida(jugador_defensor, jugador_atacante)
+        crear_partida(jugador_defensor_obj, jugador_atacante_obj)
 
     mostrar_menu_principal(ventana, arrancar_partida)
 
-def crear_partida(jugador_defensor, jugador_atacante):
+def crear_partida(jugador_defensor_obj, jugador_atacante_obj):
     """Crea la partida con los dos jugadores y pasa a elegir facciones."""
     global partida
-    partida = Partida(jugador_defensor, jugador_atacante)
+    partida = Partida(jugador_defensor_obj, jugador_atacante_obj)
 
-    # reinicia el estado de selección para la partida nueva
+    # Reinicia el estado de selección para la partida nueva
     ventana.fila_seleccionada = None
     ventana.columna_seleccionada = None
     ventana.objeto_seleccionado = None
 
-    # reinicia el tablero para que se dibuje desde cero
-    import interfaz_tablero
+    # Reinicia el tablero para que se dibuje desde cero
     interfaz_tablero.tablero_iniciado = False
-
     elegir_faccion_defensor(ventana, partida)
 
 
-iniciar_juego()
+if __name__ == "__main__":
+    iniciar_juego()
