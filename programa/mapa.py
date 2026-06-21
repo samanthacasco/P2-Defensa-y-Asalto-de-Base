@@ -139,6 +139,7 @@ class Mapa:
 
         return True # el movimiento se realizó correctamente
     
+    def obtener_velocidad_movimiento(self, unidad):
         # Usa la velocidad normal de la unidad
         velocidad = unidad.velocidad
 
