@@ -279,14 +279,12 @@ def seleccionar_casilla_y_objeto(ventana, fila, columna, objeto):
         ventana.label_vida.config(text=f"Vida: {objeto.vida}")
 
 def terminar_turno_interfaz(ventana, partida):
-    """Termina el turno. Si termina el atacante, las torres atacan automáticamente.
-    Luego se pasa al siguiente jugador y se revisa el fin de ronda.
+    """Termina el turno actual y pasa al siguiente jugador.
+    El combate de las torres ya no ocurre aquí: el atacante lo inicia con el botón
+    'Iniciar combate'. Esta función solo cambia el turno y revisa el fin de ronda.
     Recibe la ventana y la partida.
     No devuelve nada.
     """
-    if partida.jugador_actual == "atacante":
-        combate_automatico(partida)
-
     partida.cambiar_turno()
     revisar_fin_de_ronda(ventana, partida)
 
@@ -422,17 +420,92 @@ def atacar_interfaz(ventana, partida):
     # Actualiza el tablero y la información visual
     revisar_fin_de_ronda(ventana, partida)
 
-def combate_automatico(partida):
-    """Todas las torres atacan automáticamente a las unidades en su alcance.
-    Recibe la partida.
-    No devuelve nada.
+def buscar_objetivo_defensor(unidad, partida):
+    """Busca un objetivo del defensor (torre, muro o base) en el alcance de la unidad.
+    Da prioridad a torres, luego muros, y por último la base.
+    Recibe la unidad atacante y la partida.
+    Devuelve el objetivo encontrado o None.
     """
-    # cada torre ataca a una unidad que tenga en su alcance
+    for torre in partida.mapa.torres:
+        if esta_al_alcance(unidad, torre):
+            return torre
+    for muro in partida.mapa.muros:
+        if esta_al_alcance(unidad, muro):
+            return muro
+    if esta_al_alcance(unidad, partida.mapa.base):
+        return partida.mapa.base
+    return None
+
+
+def combate_automatico(partida):
+    """Ejecuta toda la fase de combate automáticamente.
+    Primero las torres atacan a las unidades en su alcance;
+    luego las unidades atacan a las torres, muros o la base en su alcance.
+    Recibe la partida.
+    Devuelve una lista de textos describiendo lo que ocurrió.
+    """
+    eventos = []   # textos para el resumen visual
+
+    # 1) las torres atacan a las unidades en su alcance
     for torre in list(partida.mapa.torres):
         for unidad in list(partida.mapa.unidades):
             if esta_al_alcance(torre, unidad):
+                vida_antes = unidad.vida
                 atacar(torre, unidad, partida.mapa)
-                break   # cada torre ataca a una sola unidad por turno
+                dano = vida_antes - unidad.vida
+
+                if unidad.esta_destruida():
+                    eventos.append(f"Torre {torre.nombre} eliminó a {unidad.nombre} ({dano} de daño)")
+                else:
+                    eventos.append(f"Torre {torre.nombre} dañó a {unidad.nombre}: {dano} (le queda {unidad.vida})")
+                break   # cada torre ataca a una sola unidad
+
+    # 2) las unidades atacan a las torres, muros o la base en su alcance
+    for unidad in list(partida.mapa.unidades):
+        objetivo = buscar_objetivo_defensor(unidad, partida)
+        if objetivo is not None:
+            vida_antes = objetivo.vida
+            atacar(unidad, objetivo, partida.mapa)
+            dano = vida_antes - objetivo.vida
+
+            # nombre legible del objetivo
+            if isinstance(objetivo, Base):
+                nombre_obj = "la Base"
+            elif isinstance(objetivo, Muro):
+                nombre_obj = "un Muro"
+            else:
+                nombre_obj = f"la Torre {objetivo.nombre}"
+
+            if objetivo.esta_destruida() and not isinstance(objetivo, Base):
+                eventos.append(f"{unidad.nombre} destruyó {nombre_obj} ({dano} de daño)")
+            else:
+                eventos.append(f"{unidad.nombre} atacó {nombre_obj}: {dano} de daño")
+
+    return eventos
+
+
+def iniciar_combate_interfaz(ventana, partida):
+    """Ejecuta la fase de combate automática (torres y unidades atacan solas) y muestra
+    un resumen visual. Solo se inicia en el turno del atacante, tras mover sus unidades.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+    if partida.jugador_actual != "atacante":
+        messagebox.showwarning("No es tu turno", "El combate se inicia en el turno del atacante, luego de mover tus unidades.")
+        return
+
+    # ejecuta toda la fase de combate y obtiene el resumen
+    eventos = combate_automatico(partida)
+
+    # muestra el resumen visual de lo que pasó
+    if eventos:
+        resumen = "\n".join(eventos)
+        messagebox.showinfo("Fase de combate", resumen)
+    else:
+        messagebox.showinfo("Fase de combate", "No hubo enemigos en alcance este turno.")
+
+    # revisa si terminó la ronda o la partida tras el combate
+    revisar_fin_de_ronda(ventana, partida)
             
 def activar_habilidad_interfaz(ventana, partida):
     """Activa la habilidad especial de una unidad seleccionada.
@@ -491,7 +564,8 @@ def texto_ayuda(partida):
                 "3) Seleccionala y muevela con las flechas\n"
                 "4) Atacar: 'Seleccionar atacante', luego\n"
                 "   'Seleccionar objetivo', luego 'Atacar'\n"
-                "5) Presiona 'Terminar turno'")
+                "5) Presiona 'Iniciar combate' (las torres atacan)\n"
+                "6) Presiona 'Terminar turno'")
 
 
 def mostrar_instrucciones_inicio(partida):
@@ -630,8 +704,16 @@ def mostrar_tablero(ventana, partida):
         boton_habilidad = tk.Button(frame_panel,text="Activar habilidad",width=20,command=lambda: activar_habilidad_interfaz(ventana, partida))
 
         boton_habilidad.grid(row=12, column=0, columnspan=2, pady=5)
+
+        # botón para iniciar la fase de combate (las torres atacan)
+        boton_combate = tk.Button(frame_panel, text="Iniciar combate", width=20, command=lambda: iniciar_combate_interfaz(ventana, partida))
+        boton_combate.grid(row=13, column=0, columnspan=2, pady=5)
+
         # ----- botón terminar turno -----
-        tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=13, column=0, columnspan=2, pady=15)
+        tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=15, column=0, columnspan=2, pady=15)
+
+        # botón para regresar al menú durante la partida
+        tk.Button(frame_panel, text="← Regresar al menú", width=20, command=lambda: regresar_al_menu(ventana, partida)).grid(row=16, column=0, columnspan=2, pady=5)
 
         tablero_iniciado = True
 
@@ -721,18 +803,70 @@ def mostrar_ganador(ventana, partida):
     mensaje = tk.Label(ventana, text=f"¡Ganó {nombre_ganador} ({ganador})!", font=("Arial", 18))
     mensaje.pack(pady=10)
 
-    boton_salir = tk.Button(ventana, text="Salir", command=ventana.destroy)
-    boton_salir.pack(pady=20)
+    boton_menu = tk.Button(ventana, text="Regresar al menú", command=lambda: regresar_al_menu(ventana, partida))
+    boton_menu.pack(pady=20)
 
-def revisar_fin_de_ronda(ventana, partida):
-    """Revisa si terminó la ronda y, si hay un ganador de la partida, muestra la pantalla final.
+
+def regresar_al_menu(ventana, partida):
+    """Vuelve al menú principal desde la pantalla de fin de partida.
+    Reinicia el tablero para que una próxima partida se dibuje desde cero.
     Recibe la ventana y la partida.
     No devuelve nada.
     """
-    partida.registrar_ronda()
-    ganador = partida.obtener_ganador()
+    global tablero_iniciado
+    # permite que el tablero se reconstruya en la próxima partida
+    tablero_iniciado = False
 
-    if ganador is not None:
-        mostrar_ganador(ventana, partida)
-    else:
-        mostrar_tablero(ventana, partida)
+    # arranca una partida nueva con los mismos jugadores al elegir "Iniciar juego"
+    from interfaz_menu import mostrar_menu_principal
+    from interfaz_facciones import elegir_faccion_defensor
+    from partida import Partida
+
+    jugador_defensor = partida.jugador_defensor
+    jugador_atacante = partida.jugador_atacante
+
+    def arrancar_partida_nueva():
+        global tablero_iniciado
+        tablero_iniciado = False
+        nueva = Partida(jugador_defensor, jugador_atacante)
+        ventana.fila_seleccionada = None
+        ventana.columna_seleccionada = None
+        ventana.objeto_seleccionado = None
+        ventana.atacante_seleccionado = None
+        ventana.objetivo_seleccionado = None
+        elegir_faccion_defensor(ventana, nueva)
+
+    mostrar_menu_principal(ventana, arrancar_partida_nueva)
+
+def revisar_fin_de_ronda(ventana, partida):
+    """Revisa el estado de la partida y la ronda.
+    Si alguien ganó la partida (3 rondas), muestra la pantalla final.
+    Si terminó la ronda, registra el punto, avisa quién ganó y reinicia para la siguiente.
+    Si no terminó, sigue el juego normal.
+    Recibe la ventana y la partida.
+    No devuelve nada.
+    """
+    if partida.ronda_termino():
+        gano_atac = partida.gano_atacante()
+
+        partida.registrar_ronda()
+
+        ganador = partida.obtener_ganador()
+        if ganador is not None:
+            mostrar_ganador(ventana, partida)
+            return
+
+        if gano_atac:
+            messagebox.showinfo("Fin de ronda", "¡El atacante destruyó la base y ganó la ronda!")
+        else:
+            messagebox.showinfo("Fin de ronda", "¡El defensor resistió y ganó la ronda!")
+
+        partida.reiniciar_ronda()
+
+        ventana.fila_seleccionada = None
+        ventana.columna_seleccionada = None
+        ventana.objeto_seleccionado = None
+        ventana.atacante_seleccionado = None
+        ventana.objetivo_seleccionado = None
+
+    mostrar_tablero(ventana, partida)
