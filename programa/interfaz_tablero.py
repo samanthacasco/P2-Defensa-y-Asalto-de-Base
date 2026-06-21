@@ -2,6 +2,7 @@ import tkinter as tk
 from utilidades import centrar_ventana, limpiar_ventana, cargar_imagen, crear_imagen_vacia
 from modelo import (Base, Muro, Torre, Unidad, TorreBasica, TorrePesada, TorreMagica,
                     Soldado, Tanque, UnidadRapida)
+from economia import comprar_unidad
 
 def obtener_imagen(contenido, partida):
     """Devuelve la ruta de imagen correcta para un objeto según su tipo y la facción de su dueño.
@@ -75,11 +76,68 @@ def mover_derecha_interfaz(ventana, partida):
         partida.mapa.mover_derecha(ventana.objeto_seleccionado)
         mostrar_tablero(ventana, partida)
 
+#-------------
+def comprar_soldado_interfaz(ventana, partida):
+    """Compra un soldado y lo coloca en la casilla seleccionada
+    Recibe la ventana y la partida
+    No devuelve nada
+    """
+    # Verifica que el jugador haya seleccionado una casilla
+    if ventana.fila_seleccionada is None or ventana.columna_seleccionada is None:
+        print("Primero selecciona una casilla")
+        return
+
+    # Crea un soldado
+    soldado = Soldado()
+
+    # Intenta comprarlo y colocarlo en la posición (0, 0)
+    compra_exitosa = comprar_unidad(partida, soldado, ventana.fila_seleccionada, ventana.columna_seleccionada, "atacante")
+
+    # Si se pudo comprar, se vuelve a dibujar el tablero actualizado
+    if compra_exitosa:
+        mostrar_tablero(ventana, partida)
+    else:
+         print("No se pudo comprar")
+
+def seleccionar_casilla(ventana, fila, columna):
+    """Guarda la posición de una casilla seleccionada.
+
+    Recibe la ventana y las coordenadas de la casilla.
+    No devuelve nada.
+    """
+
+    # Guarda la fila seleccionada
+    ventana.fila_seleccionada = fila
+
+    # Guarda la columna seleccionada
+    ventana.columna_seleccionada = columna
+
+    print(f"Casilla seleccionada: ({fila}, {columna})")
+
+def seleccionar_casilla_y_objeto(ventana, fila, columna, objeto):
+    """Guarda la casilla seleccionada y el objeto que está en esa casilla.
+    Recibe la ventana, la fila, la columna y el objeto de la casilla.
+    No devuelve nada.
+    """
+
+    # Guarda la fila seleccionada
+    ventana.fila_seleccionada = fila
+
+    # Guarda la columna seleccionada
+    ventana.columna_seleccionada = columna
+
+    # Guarda el objeto seleccionado
+    # Si la casilla está vacía, objeto será None
+    ventana.objeto_seleccionado = objeto
+
+    print(f"Casilla seleccionada: ({fila}, {columna})")
+
+
 def mostrar_tablero(ventana, partida):
     limpiar_ventana(ventana)
     
     tamano = 40
-    ancho = partida.mapa.columnas * tamano + 250
+    ancho = partida.mapa.columnas * tamano + 450
     alto = partida.mapa.filas * tamano + 120
     centrar_ventana(ventana, ancho, alto)
     
@@ -121,11 +179,15 @@ def mostrar_tablero(ventana, partida):
 
     # botón para mover hacia la derecha
     boton_derecha = tk.Button(ventana, text="→", command=lambda: mover_derecha_interfaz(ventana, partida))
-    boton_derecha.grid(row=8, column=23)
+    boton_derecha.grid(row=8, column=24)
 
     # btón para mover hacia abajo
     boton_abajo = tk.Button(ventana, text="↓", command=lambda: mover_abajo_interfaz(ventana, partida))
     boton_abajo.grid(row=9, column=22)
+
+    # boton para comprar soldado 
+    boton_comprar_soldado = tk.Button(ventana, text="Comprar Soldado", command=lambda: comprar_soldado_interfaz(ventana, partida))
+    boton_comprar_soldado.grid(row=11, column=22, padx=15, pady=5)
 
     for fila in range(partida.mapa.filas):
         for columna in range(partida.mapa.columnas):
@@ -138,5 +200,6 @@ def mostrar_tablero(ventana, partida):
                 imagen = cargar_imagen(ruta, tamano)        
                 ventana.imagenes.append(imagen)
 
-            boton = tk.Button(ventana, image=imagen, width=tamano, height=tamano, command=lambda o=contenido: seleccionar_objeto(ventana, o)) 
+            boton = tk.Button(ventana, image=imagen, width=tamano, height=tamano, command=lambda f=fila, c=columna, o=contenido: seleccionar_casilla_y_objeto(ventana, f, c, o)) 
             boton.grid(row=fila, column=columna)
+
