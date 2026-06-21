@@ -395,6 +395,14 @@ def atacar_interfaz(ventana, partida):
     # Calcula cuánto daño se realizó
     dano_realizado = vida_antes - vida_despues
 
+    # Si el atacante dañó una torre o la base, gana dinero extra
+    if isinstance(ventana.objetivo_seleccionado, (Torre, Base)):
+        partida.dinero_atacante += dano_realizado
+    
+    # Si el objetivo destruido era una unidad, el defensor gana dinero
+    if ventana.objetivo_seleccionado.esta_destruida() and isinstance(ventana.objetivo_seleccionado, Unidad):
+        partida.dinero_defensor += ventana.objetivo_seleccionado.costo
+
     # Prepara el texto de la habilidad si se activó alguna
     if habilidad_usada is not None:
         texto_habilidad = f"Habilidad activada: {habilidad_usada}\n"
@@ -430,10 +438,7 @@ def activar_habilidad_interfaz(ventana, partida):
 
     # Verifica que haya un objeto seleccionado
     if ventana.objeto_seleccionado is None:
-        messagebox.showwarning(
-            "Sin objeto",
-            "Primero selecciona una unidad."
-        )
+        messagebox.showwarning( "Sin objeto", "Primero selecciona una unidad.")
         return
 
     # Si el objeto seleccionado es un tanque, intenta activar escudo temporal
@@ -441,37 +446,22 @@ def activar_habilidad_interfaz(ventana, partida):
         habilidad_activada = escudo_temporal(ventana.objeto_seleccionado)
 
         if habilidad_activada:
-            messagebox.showinfo(
-                "Habilidad activada",
-                "El tanque activó Escudo temporal."
-            )
+            messagebox.showinfo("Habilidad activada","El tanque activó Escudo temporal." )
         else:
-            messagebox.showinfo(
-                "Habilidad no disponible",
-                "El escudo temporal todavía no está listo."
-            )
+            messagebox.showinfo("Habilidad no disponible","El escudo temporal todavía no está listo.")
 
     # Si el objeto seleccionado es una unidad rápida, intenta activar aumento de velocidad
     elif isinstance(ventana.objeto_seleccionado, UnidadRapida):
         habilidad_activada = aumento_velocidad(ventana.objeto_seleccionado)
 
         if habilidad_activada:
-            messagebox.showinfo(
-                "Habilidad activada",
-                "La unidad rápida activó Aumento de velocidad."
-            )
+            messagebox.showinfo( "Habilidad activada", "La unidad rápida activó Aumento de velocidad." )
         else:
-            messagebox.showinfo(
-                "Habilidad no disponible",
-                "El aumento de velocidad todavía no está listo."
-            )
+            messagebox.showinfo("Habilidad no disponible", "El aumento de velocidad todavía no está listo." )
 
     # Si selecciona otro objeto, no tiene esta habilidad
     else:
-        messagebox.showwarning(
-            "Habilidad no válida",
-            "Este objeto no tiene una habilidad activable desde este botón."
-        )
+        messagebox.showwarning("Habilidad no válida","Este objeto no tiene una habilidad activable desde este botón.")
         return
 
     # Actualiza la interfaz
@@ -690,4 +680,3 @@ def revisar_fin_de_ronda(ventana, partida):
         mostrar_ganador(ventana, partida)
     else:
         mostrar_tablero(ventana, partida)
-
