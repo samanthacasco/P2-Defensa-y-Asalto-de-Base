@@ -469,6 +469,47 @@ def activar_habilidad_interfaz(ventana, partida):
 
 #____________________
 
+def texto_ayuda(partida):
+    """Devuelve las instrucciones de juego según el rol del turno actual.
+    Recibe la partida.
+    Devuelve un texto con los pasos a seguir.
+    """
+    if partida.jugador_actual == "defensor":
+        return ("TURNO DEL DEFENSOR\n"
+                "1) Haz clic en una casilla vacia\n"
+                "2) Compra un muro o una torre\n"
+                "3) Repite para colocar mas defensas\n"
+                "4) Presiona 'Terminar turno'")
+    else:
+        return ("TURNO DEL ATACANTE\n"
+                "1) Haz clic en una casilla vacia\n"
+                "2) Compra una unidad\n"
+                "3) Seleccionala y muevela con las flechas\n"
+                "4) Atacar: 'Seleccionar atacante', luego\n"
+                "   'Seleccionar objetivo', luego 'Atacar'\n"
+                "5) Presiona 'Terminar turno'")
+
+
+def mostrar_instrucciones_inicio(partida):
+    """Muestra un cartel con las reglas e instrucciones al empezar la partida.
+    Recibe la partida.
+    No devuelve nada.
+    """
+    texto = ("Bienvenido a Defensa y Asalto de Base\n\n"
+             "OBJETIVO:\n"
+             "- El defensor protege la base central con muros y torres.\n"
+             "- El atacante destruye la base con sus unidades.\n"
+             "- Gana el primero en ganar 3 rondas.\n\n"
+             "COMO JUGAR:\n"
+             "- Cada jugador juega en su turno.\n"
+             "- Defensor: coloca torres y muros, luego termina turno.\n"
+             "- Atacante: compra unidades, las mueve y ataca.\n"
+             "- Las torres atacan solas al terminar el turno del atacante.\n\n"
+             "La guia de cada turno aparece en el panel derecho.")
+    messagebox.showinfo("Como jugar", texto)
+
+#____________________
+
 def mostrar_tablero(ventana, partida):
     """Muestra el tablero. La primera vez crea toda la interfaz con frames separados
     (uno para el tablero y otro para el panel); las siguientes veces solo actualiza
@@ -538,6 +579,11 @@ def mostrar_tablero(ventana, partida):
         ventana.label_vida = tk.Label(frame_panel, text="Vida: -")
         ventana.label_vida.grid(row=8, column=0, columnspan=2, pady=4)
 
+        # ----- guía de ayuda según el turno -----
+        ventana.label_ayuda = tk.Label(frame_panel, text=texto_ayuda(partida),
+                                       justify="left", fg="#1a5e3a", font=("Arial", 9))
+        ventana.label_ayuda.grid(row=14, column=0, columnspan=2, pady=10)
+
         # ----- frame de compras del atacante -----
         frame_atacante = tk.LabelFrame(frame_panel, text="Atacante", padx=10, pady=10)
         frame_atacante.grid(row=3, column=0, padx=10, pady=10, sticky="n")
@@ -584,6 +630,9 @@ def mostrar_tablero(ventana, partida):
         tk.Button(frame_panel, text="Terminar turno", width=20, command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=13, column=0, columnspan=2, pady=15)
 
         tablero_iniciado = True
+
+        # muestra las instrucciones de juego al empezar la partida
+        mostrar_instrucciones_inicio(partida)
 
     # Siempre: actualizar imágenes de casillas y textos del panel
     actualizar_casillas(ventana, partida, tamano)
@@ -640,6 +689,9 @@ def actualizar_info(ventana, partida):
         texto_objeto = f"Objeto seleccionado: {ventana.objeto_seleccionado.nombre}"
 
     ventana.label_objeto.config(text=texto_objeto)
+
+    # Actualiza la guía de ayuda según el turno actual
+    ventana.label_ayuda.config(text=texto_ayuda(partida))
 
 def mostrar_ganador(ventana, partida):
     """Muestra la pantalla de fin de partida con el ganador.
