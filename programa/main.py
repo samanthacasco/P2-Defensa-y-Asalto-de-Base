@@ -42,13 +42,13 @@ def login_defensor():
     limpiar_ventana(ventana)
     ventana.configure(bg="#e8e2d0")  # color de fondo
 
-    tk.Label(ventana, text="LOGIN DEFENSOR", font=("Arial", 12, "bold")).pack(pady=10)
-    
-    tk.Label(ventana, text="Usuario:",bg="#e8e2d0").pack()
+    tk.Label(ventana, text="LOGIN DEFENSOR", font=("Arial", 12, "bold"), bg="#e8e2d0").pack(pady=10)
+
+    tk.Label(ventana, text="Usuario:", bg="#e8e2d0").pack()
     entry_usuario = tk.Entry(ventana)
     entry_usuario.pack(pady=5)
-    
-    tk.Label(ventana, text="Contraseña:",bg="#e8e2d0").pack()
+
+    tk.Label(ventana, text="Contraseña:", bg="#e8e2d0").pack()
     entry_clave = tk.Entry(ventana, show="*")
     entry_clave.pack(pady=5)
 
@@ -83,21 +83,22 @@ def login_defensor():
         else:
             messagebox.showerror("Error", "Ese usuario ya existe")
 
-    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15,bg="#ffcccc").pack(pady=5)
-    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15,bg="#ffcccc").pack(pady=5)
+    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15, bg="#ffcccc").pack(pady=5)
+    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15, bg="#ffcccc").pack(pady=5)
 
 
 def login_atacante(jugador_defensor_logueado):
     """Pantalla de login del atacante. Recibe el jugador defensor ya logueado."""
     limpiar_ventana(ventana)
+    ventana.configure(bg="#e8e2d0")  # color de fondo
 
-    tk.Label(ventana, text="LOGIN ATACANTE", font=("Arial", 12, "bold")).pack(pady=10)
-    
+    tk.Label(ventana, text="LOGIN ATACANTE", font=("Arial", 12, "bold"), bg="#e8e2d0").pack(pady=10)
+
     tk.Label(ventana, text="Usuario:", bg="#e8e2d0").pack()
     entry_usuario = tk.Entry(ventana)
     entry_usuario.pack(pady=5)
-    
-    tk.Label(ventana, text="Contraseña:",bg="#e8e2d0").pack()
+
+    tk.Label(ventana, text="Contraseña:", bg="#e8e2d0").pack()
     entry_clave = tk.Entry(ventana, show="*")
     entry_clave.pack(pady=5)
 
@@ -109,7 +110,8 @@ def login_atacante(jugador_defensor_logueado):
             messagebox.showerror("Error", "No se pueden usar campos vacíos")
             return
 
-        if usuario == jugador_defensor_logueado.usuario:
+        # Comparamos en mayúsculas porque los usuarios se guardan en mayúsculas
+        if usuario.upper() == jugador_defensor_logueado.usuario:
             messagebox.showerror("Error", "Ese jugador ya entró como defensor")
             return
 
@@ -132,8 +134,8 @@ def login_atacante(jugador_defensor_logueado):
         else:
             messagebox.showerror("Error", "Ese usuario ya existe")
 
-    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15,bg="#ffcccc").pack(pady=5)
-    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15,bg="#ffcccc").pack(pady=5)
+    tk.Button(ventana, text="Iniciar sesión", command=intentar, width=15, bg="#ffcccc").pack(pady=5)
+    tk.Button(ventana, text="Registrarse", command=intentar_registrar, width=15, bg="#ffcccc").pack(pady=5)
 
 
 def ir_al_menu(jugador_defensor_obj, jugador_atacante_obj):
@@ -142,6 +144,7 @@ def ir_al_menu(jugador_defensor_obj, jugador_atacante_obj):
         crear_partida(jugador_defensor_obj, jugador_atacante_obj)
 
     mostrar_menu_principal(ventana, arrancar_partida)
+
 
 def crear_partida(jugador_defensor_obj, jugador_atacante_obj):
     """Crea la partida con los dos jugadores y pasa a elegir facciones."""
