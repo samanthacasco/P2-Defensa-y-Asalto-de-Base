@@ -48,28 +48,32 @@ def mover_arriba_interfaz(ventana, partida):
     Recibe la ventana y la partida
     No devuelve nada
     """
-    if ventana.objeto_seleccionado is not None:
+    # solo las unidades pueden moverse (las torres y muros no tienen velocidad)
+    if ventana.objeto_seleccionado is not None and isinstance(ventana.objeto_seleccionado, Unidad):
         partida.mapa.mover_arriba(ventana.objeto_seleccionado)
         mostrar_tablero(ventana, partida)
 
 
 def mover_abajo_interfaz(ventana, partida):
     """Mueve hacia abajo la unidad seleccionada"""
-    if ventana.objeto_seleccionado is not None:
+    # solo las unidades pueden moverse
+    if ventana.objeto_seleccionado is not None and isinstance(ventana.objeto_seleccionado, Unidad):
         partida.mapa.mover_abajo(ventana.objeto_seleccionado)
         mostrar_tablero(ventana, partida)
 
 
 def mover_izquierda_interfaz(ventana, partida):
     """Mueve hacia la izquierda la unidad seleccionada"""
-    if ventana.objeto_seleccionado is not None:
+    # solo las unidades pueden moverse
+    if ventana.objeto_seleccionado is not None and isinstance(ventana.objeto_seleccionado, Unidad):
         partida.mapa.mover_izquierda(ventana.objeto_seleccionado)
         mostrar_tablero(ventana, partida)
 
 
 def mover_derecha_interfaz(ventana, partida):
     """Mueve hacia la derecha la unidad seleccionada"""
-    if ventana.objeto_seleccionado is not None:
+    # solo las unidades pueden moverse
+    if ventana.objeto_seleccionado is not None and isinstance(ventana.objeto_seleccionado, Unidad):
         partida.mapa.mover_derecha(ventana.objeto_seleccionado)
         mostrar_tablero(ventana, partida)
 
