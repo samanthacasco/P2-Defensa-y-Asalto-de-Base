@@ -7,7 +7,6 @@ from economia import comprar_unidad, comprar_torre, comprar_muro
 from combate import atacar, esta_al_alcance
 from habilidades import (ataque_doble, disparo_doble, danio_aumentado, congelar, escudo_temporal, aumento_velocidad)
 
-
 tablero_iniciado = False
 
 def obtener_imagen(contenido, partida):
@@ -632,7 +631,7 @@ def mostrar_tablero(ventana, partida):
         ventana.label_turno = tk.Label(frame_info, text=f"Turno: {partida.turno}", justify="left", fg="#c82558", bg="#e8e2d0",font=("Arial", 9),wraplength=210)
         ventana.label_turno.grid(row=3, column=0, sticky="w", pady=4)
 
-        ventana.label_jugador = tk.Label(frame_info, text=f"Jugador actual: {partida.jugador_actual}", justify="left", fg="#c82558", bg="#e8e2d0",font=("Arial", 9),wraplength=210)
+        ventana.label_jugador = tk.Label(frame_info, text=f"Jugador actual: {partida.jugador_actual}", justify="left", fg="#c82558", bg="#a9fcf1",font=("Arial", 9),wraplength=210)
         ventana.label_jugador.grid(row=4, column=0, sticky="w", pady=4)
 
         ventana.label_rondas_defensor = tk.Label(frame_info, text=f"Rondas defensor: {partida.rondas_defensor}", justify="left", fg="#c82558",bg="#e8e2d0", font=("Arial", 9),wraplength=210)
@@ -720,14 +719,14 @@ def mostrar_tablero(ventana, partida):
         boton_habilidad.grid(row=6, column=0, columnspan=2, pady=5)
 
         # botón para iniciar la fase de combate (las torres atacan)
-        boton_combate = tk.Button(frame_panel, text="Iniciar combate", width=20, bg="#ffcccc", command=lambda: iniciar_combate_interfaz(ventana, partida))
+        boton_combate = tk.Button(frame_panel, text="Iniciar combate", width=20, bg="#ec5656", command=lambda: iniciar_combate_interfaz(ventana, partida))
         boton_combate.grid(row=7, column=0, columnspan=2, pady=5)
 
         # ----- botón terminar turno -----
         tk.Button(frame_panel, text="Terminar turno", width=20, bg="#ffcccc", command=lambda: terminar_turno_interfaz(ventana, partida)).grid(row=8, column=0, columnspan=2, pady=15)
 
         # botón para regresar al menú durante la partida
-        tk.Button(frame_panel, text="← Regresar al menú", width=20, bg="#ffcccc", command=lambda: regresar_al_menu(ventana, partida)).grid(row=9, column=0, columnspan=2, pady=5)
+        tk.Button(frame_panel, text="← Regresar al menú", width=20, bg="#f58d8d", command=lambda: regresar_al_menu(ventana, partida)).grid(row=9, column=0, columnspan=2, pady=5)
 
         tablero_iniciado = True
 
@@ -757,6 +756,11 @@ def actualizar_casillas(ventana, partida, tamano):
 
             ventana.botones[fila][columna].config(image=imagen)
 
+            if fila == ventana.fila_seleccionada and columna == ventana.columna_seleccionada:
+                ventana.botones[fila][columna].config(bg="#c15b7c", relief="solid", bd=3)
+            else:
+                ventana.botones[fila][columna].config(bg="#ffcccc", relief="ridge", bd=1)
+                
 def actualizar_info(ventana, partida):
     """Actualiza los textos del panel (dinero, turno, rondas) sin recrearlos.
     Recibe la ventana y la partida.
