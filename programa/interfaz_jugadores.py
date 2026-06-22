@@ -3,9 +3,6 @@ from utilidades import centrar_ventana, limpiar_ventana
 from jugador import login, registrar, ranking_defensores, ranking_atacantes
 from tkinter import messagebox
 
-# NOTA: Ya NO usamos "global ventana" creado aquí adentro. 
-# Ahora todas las funciones reciben la 'ventana' desde afuera.
-
 def mostrar_menu_jugadores(ventana, al_iniciar_sesion_exito):
     """Dibuja la pantalla de gestión de usuarios usando la ventana principal."""
     limpiar_ventana(ventana)  
