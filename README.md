@@ -73,8 +73,6 @@ habilidades.py → Habilidades especiales.
 
 interfaz_menu.py → Menú principal.
 
-interfaz_jugadores.py → Registro e inicio de sesión.
-
 interfaz_facciones.py → Selección de facciones.
 
 interfaz_tablero.py → Interfaz principal del juego.
