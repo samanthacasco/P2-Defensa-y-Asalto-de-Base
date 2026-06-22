@@ -7,8 +7,8 @@ class Base:
     """Representa la base central que debe proteger el defensor"""
 
     def __init__(self):
-        """Crea una base con 1000 puntos de vida"""
-        self.vida = 1000
+        """Crea una base con 400 puntos de vida"""
+        self.vida = 400
         self.posicion = None
         self.imagen = "imagenes/base.png"
 
